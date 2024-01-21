@@ -3,7 +3,7 @@ from .inverted_pendulum_simulator.src.inverted_pendulum import InvertedPendulum
 class InvertedPendulumEnvironment:
     def __init__(self):
         self.simulator = InvertedPendulum()
-        # Define action and state spaces here
+        # Define action and state spaces
 
     def reset(self):
         # Reset the simulator to the initial state
@@ -11,7 +11,6 @@ class InvertedPendulumEnvironment:
         pass
 
     def step(self, action):
-        # Convert the action to voltage if necessary
         # Apply the action to the simulator
         new_state = self.simulator.simulate_step(voltage=action)
         # Calculate the reward based on the new state
