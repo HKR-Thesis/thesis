@@ -1,3 +1,3 @@
-[submodule "src/inverted-pendulum-simulator"]
-	path = src/inverted-pendulum-simulator
-	url = git@github.com:HKR-Thesis/inverted-pendulum-simulator.git
+[submodule "src/inverted_pendulum_simulator"]
+	path = src/inverted_pendulum_simulator
+	url = git@github.com:HKR-Thesis/inverted_pendulum_simulator.git
