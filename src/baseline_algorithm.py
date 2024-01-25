@@ -19,6 +19,8 @@ import time
 
 
 def main():
+    while True:
+        pendulum_simulation = InvertedPendulum()
     pass
 
 
