@@ -8,14 +8,14 @@ def simulate_episodes(num_ep: int):
 
     config = {
         "alpha": 0.1,
-        "gamma": 0.9,
-        "epsilon": 0.1,
+        "gamma": 1,
+        "epsilon": 0.2,
         "number_of_episodes": num_ep,
         "bins": {
-            "theta": 10,
-            "theta_dot": 10,
-            "cart_position": 10,
-            "cart_velocity": 10,
+            "theta": 30,
+            "theta_dot": 30,
+            "cart_position": 30,
+            "cart_velocity": 30,
         },
         "low_bounds": {
             "theta": 2.71,
@@ -35,6 +35,7 @@ def simulate_episodes(num_ep: int):
         ],
     }
 
+    total_rewards = []
     q_learning = QLearning(config)
     for episode_index in range(num_ep):
         rewards_episode = []
@@ -49,8 +50,9 @@ def simulate_episodes(num_ep: int):
             next_state_disc = q_learning.discretize_state(inverted_pendulum)
 
             rewards_episode.append(reward)
-            q_learning.update_q_table(disc_state, action, reward, next_state_disc)  # type: ignore
+            q_learning.update_q_table(disc_state, action, reward, next_state_disc, done)  # type: ignore
 
         print(f"Episode {episode_index} - Total reward: {sum(rewards_episode)}")
+        total_rewards.append(sum(rewards_episode))
 
-    return q_learning.q_table
+    return q_learning, total_rewards

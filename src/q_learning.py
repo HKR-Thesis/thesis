@@ -77,10 +77,10 @@ class QLearning:
         cart_velocity_index = np.digitize(cart_velocity, cart_velocity_bins)
 
         return (
-            theta_index - 1,
-            theta_dot_index - 1,
-            cart_position_index - 1,
-            cart_velocity_index - 1,
+            np.subtract(theta_index, 1),
+            np.subtract(theta_dot_index, 1),
+            np.subtract(cart_position_index, 1),
+            np.subtract(cart_velocity_index, 1),
         )
 
     def select_action(
@@ -104,9 +104,13 @@ class QLearning:
         action: np.intp,
         reward: float,
         next_state: tuple[np.intp, np.intp, np.intp, np.intp],
+        terminal_state: bool,
     ) -> None:
-        self.q_table[state][action] += self.alpha * (
-            reward
-            + self.gamma * np.max(self.q_table[next_state])
-            - self.q_table[state][action]
-        )
+        q_max_prime = np.max(self.q_table[next_state])
+
+        if terminal_state:
+            error = reward + self.gamma * q_max_prime - self.q_table[state][action]
+            self.q_table[state][action] += self.alpha * error
+        else:
+            error = reward - self.q_table[state + (action,)]
+            self.q_table[state][action] += self.alpha * error
