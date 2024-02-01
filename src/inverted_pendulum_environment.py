@@ -81,7 +81,7 @@ class InvertedPendulumEnvironment:
 
     def reset(self):
         self.simulator = InvertedPendulum()
-        return self.discretize_state()
+        # Reset the simulator
 
     def step(self, action):
         # Apply the action to the simulator
@@ -143,4 +143,8 @@ if __name__ == "__main__":
         }
     )
     state = env.reset()
-    print(state)
+    print(env.select_action(0))
+    print(env.select_action(50))
+    print(env.select_action(100))
+    print(env.select_action(1000))
+    print(env.select_action(10000))

@@ -38,7 +38,7 @@ def angle_based() -> None:
             elif angle < 3.125:
                 voltage_command = -voltage
 
-            pendulum_simulation.simulate_step(voltage_command)
+            pendulum_simulation.simulate_step(voltage_command)  # type: ignore
             states.append(pendulum_simulation.state.copy())
             print(pendulum_simulation.state)
 
@@ -47,7 +47,7 @@ def angle_based() -> None:
         run_simulation(pendulum_simulation, states)
 
     except KeyboardInterrupt:
-        plt.close()
+        plt.close()  # type: ignore
 
 
 def random_based():
@@ -69,7 +69,7 @@ def random_based():
         run_simulation(pendulum_simulation, states)
 
     except KeyboardInterrupt:
-        plt.close()
+        plt.close()  # type: ignore
 
 
 if __name__ == "__main__":
