@@ -42,7 +42,6 @@ def angle_based() -> None:
             states.append(pendulum_simulation.state.copy())
             print(pendulum_simulation.state)
 
-        pendulum_simulation.simulate_step(0)
         states.append(pendulum_simulation.state.copy())
         run_simulation(pendulum_simulation, states)
 
@@ -64,7 +63,6 @@ def random_based():
             states.append(pendulum_simulation.state.copy())
             print(pendulum_simulation.state)
 
-        pendulum_simulation.simulate_step(0)
         states.append(pendulum_simulation.state.copy())
         run_simulation(pendulum_simulation, states)
 
