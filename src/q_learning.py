@@ -76,19 +76,37 @@ class QLearning:
         cart_position_index = np.digitize(cart_position, cart_position_bins)
         cart_velocity_index = np.digitize(cart_velocity, cart_velocity_bins)
 
-        return theta_index, theta_dot_index, cart_position_index, cart_velocity_index
+        return (
+            theta_index - 1,
+            theta_dot_index - 1,
+            cart_position_index - 1,
+            cart_velocity_index - 1,
+        )
 
     def select_action(
-        self, state: tuple[int, int, int, int], episode_index: int
+        self, state: tuple[np.intp, np.intp, np.intp, np.intp], episode_index: int
     ) -> np.intp:
-        if episode_index > 1000:
+        if episode_index > 7000:
             self.epsilon *= 0.999
-        if episode_index < 500:
-            return np.random.choice(self.actions)
+        if episode_index < 5000:
+            return np.random.choice([0, 1])
 
         random_number = np.random.uniform(0, 1)
 
         if random_number < self.epsilon:
-            return np.random.choice(self.actions)
+            return np.random.choice([0, 1])
         else:
             return np.argmax(self.q_table[state])
+
+    def update_q_table(
+        self,
+        state: tuple[np.intp, np.intp, np.intp, np.intp],
+        action: np.intp,
+        reward: float,
+        next_state: tuple[np.intp, np.intp, np.intp, np.intp],
+    ) -> None:
+        self.q_table[state][action] += self.alpha * (
+            reward
+            + self.gamma * np.max(self.q_table[next_state])
+            - self.q_table[state][action]
+        )

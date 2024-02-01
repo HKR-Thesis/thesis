@@ -24,7 +24,7 @@ def run_simulation(
 
 def angle_based() -> None:
     pendulum_simulation = InvertedPendulum()
-    voltage = 60
+    voltage = 16
 
     try:
         num_frames = 144 * 100
@@ -52,7 +52,7 @@ def angle_based() -> None:
 
 def random_based():
     pendulum_simulation = InvertedPendulum()
-    voltage = 60
+    voltage = 16
 
     try:
         num_frames = 144 * 100
