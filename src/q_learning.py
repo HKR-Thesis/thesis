@@ -76,19 +76,41 @@ class QLearning:
         cart_position_index = np.digitize(cart_position, cart_position_bins)
         cart_velocity_index = np.digitize(cart_velocity, cart_velocity_bins)
 
-        return theta_index, theta_dot_index, cart_position_index, cart_velocity_index
+        return (
+            np.subtract(theta_index, 1),
+            np.subtract(theta_dot_index, 1),
+            np.subtract(cart_position_index, 1),
+            np.subtract(cart_velocity_index, 1),
+        )
 
     def select_action(
-        self, state: tuple[int, int, int, int], episode_index: int
+        self, state: tuple[np.intp, np.intp, np.intp, np.intp], episode_index: int
     ) -> np.intp:
-        if episode_index > 1000:
+        if episode_index > 7000:
             self.epsilon *= 0.999
-        if episode_index < 500:
-            return np.random.choice(self.actions)
+        if episode_index < 5000:
+            return np.random.choice([0, 1])
 
         random_number = np.random.uniform(0, 1)
 
         if random_number < self.epsilon:
-            return np.random.choice(self.actions)
+            return np.random.choice([0, 1])
         else:
             return np.argmax(self.q_table[state])
+
+    def update_q_table(
+        self,
+        state: tuple[np.intp, np.intp, np.intp, np.intp],
+        action: np.intp,
+        reward: float,
+        next_state: tuple[np.intp, np.intp, np.intp, np.intp],
+        terminal_state: bool,
+    ) -> None:
+        q_max_prime = np.max(self.q_table[next_state])
+
+        if terminal_state:
+            error = reward + self.gamma * q_max_prime - self.q_table[state][action]
+            self.q_table[state][action] += self.alpha * error
+        else:
+            error = reward - self.q_table[state + (action,)]
+            self.q_table[state][action] += self.alpha * error

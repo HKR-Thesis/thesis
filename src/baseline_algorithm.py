@@ -24,7 +24,7 @@ def run_simulation(
 
 def angle_based() -> None:
     pendulum_simulation = InvertedPendulum()
-    voltage = 60
+    voltage = 16
 
     try:
         num_frames = 144 * 100
@@ -42,7 +42,6 @@ def angle_based() -> None:
             states.append(pendulum_simulation.state.copy())
             print(pendulum_simulation.state)
 
-        pendulum_simulation.simulate_step(0)
         states.append(pendulum_simulation.state.copy())
         run_simulation(pendulum_simulation, states)
 
@@ -52,7 +51,7 @@ def angle_based() -> None:
 
 def random_based():
     pendulum_simulation = InvertedPendulum()
-    voltage = 60
+    voltage = 16
 
     try:
         num_frames = 144 * 100
@@ -64,7 +63,6 @@ def random_based():
             states.append(pendulum_simulation.state.copy())
             print(pendulum_simulation.state)
 
-        pendulum_simulation.simulate_step(0)
         states.append(pendulum_simulation.state.copy())
         run_simulation(pendulum_simulation, states)
 

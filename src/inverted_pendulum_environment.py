@@ -92,22 +92,6 @@ class InvertedPendulumEnvironment:
         done = self.is_done(new_state)
         return new_state, reward, done
 
-    def calculate_reward(self, state):
-        theta, _, _, _ = state
-        target_angle = 3.125
-
-        angle_difference = np.abs(theta - target_angle)
-
-        max_angle = 3.58
-        min_angle = 2.71
-
-        reward = 1.0 / (1.0 + angle_difference)
-
-        if theta >= max_angle or theta <= min_angle:
-            reward -= 2.0
-
-        return reward
-
     def select_action(self, episode_index: int) -> str:
         if episode_index < 100:
             return np.random.choice(
