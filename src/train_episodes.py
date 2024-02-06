@@ -7,7 +7,7 @@ def simulate_episodes(num_ep: int):
     inverted_pendulum = InvertedPendulum()
 
     config = {
-        "alpha": 0.1,
+        "alpha": 1,
         "gamma": 1,
         "epsilon": 0.2,
         "number_of_episodes": num_ep,
@@ -19,13 +19,13 @@ def simulate_episodes(num_ep: int):
         },
         "low_bounds": {
             "theta": 2.71,
-            "theta_dot": 0.09,
+            "theta_dot": 6,
             "cart_position": 0.0,
             "cart_velocity": -1.8,
         },
         "up_bounds": {
             "theta": 3.58,
-            "theta_dot": 6.28,
+            "theta_dot": -6,
             "cart_position": 0.5,
             "cart_velocity": 1.8,
         },

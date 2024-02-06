@@ -91,7 +91,7 @@ class QLearning:
         if episode_index < 5000:
             return np.random.choice([0, 1])
 
-        random_number = np.random.uniform(0, 1)
+        random_number = np.random.random()
 
         if random_number < self.epsilon:
             return np.random.choice([0, 1])
