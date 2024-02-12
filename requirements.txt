@@ -2,5 +2,5 @@ numpy
 matplotlib
 ipywidgets
 pyqlearning
-gym
 scipy
+numba
