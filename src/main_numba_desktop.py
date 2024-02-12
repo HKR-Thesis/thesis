@@ -1,4 +1,4 @@
-from .train_episodes import simulate_episodes
+from .numba_desktop.train_episodes import simulate_episodes
 from .simulate_learned_strategy import simulate_learned_strategy
 import matplotlib.pyplot as plt
 import time
@@ -17,7 +17,7 @@ def save_time(start_time, end_time):
     execution_time = end_time - start_time
 
     # Save the results to a text file
-    with open("execution_results_classic.txt", "w") as file:
+    with open("execution_results_numba.txt", "w") as file:
         file.write(f"Execution Time: {execution_time} seconds\n")
 
 
@@ -27,7 +27,7 @@ def main():
     end_time = time.time()
     save_time(start_time, end_time)
     reward_plot(total_rewards)
-    simulate_learned_strategy(q_learning, 1000)
+    simulate_learned_strategy(q_learning, 1000)  # type: ignore
     print(q_learning.q_table)
     print(total_rewards)
 
