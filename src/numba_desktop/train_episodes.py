@@ -41,7 +41,7 @@ def simulate_episodes(num_ep: int):
         done = False
         while not done:
             state = np.array(inverted_pendulum.state)
-            disc_state = QLearning.discretize_state(  # optimized
+            disc_state = QLearning.discretize_state(
                 state,
                 q_learning.low_bounds,
                 q_learning.up_bounds,
@@ -58,8 +58,16 @@ def simulate_episodes(num_ep: int):
             )
 
             rewards_episode.append(reward)
-            # not optimized
-            q_learning.update_q_table(disc_state, action, reward, next_state_disc, done)  # type: ignore
+            q_learning.q_table = QLearning.update_q_table(
+                q_learning.q_table,
+                disc_state,
+                action,
+                reward,
+                next_state_disc,
+                done,
+                q_learning.gamma,
+                q_learning.alpha,
+            )
 
         print(f"Episode {episode_index} - Total reward: {sum(rewards_episode)}")
         total_rewards.append(sum(rewards_episode))

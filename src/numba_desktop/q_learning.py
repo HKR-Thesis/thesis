@@ -1,7 +1,6 @@
 import numpy as np
 from ..inverted_pendulum_simulator.src.inverted_pendulum import InvertedPendulum
 from numba import njit
-from numba import float32
 
 
 class QLearning:
@@ -99,19 +98,25 @@ class QLearning:
         else:
             return np.argmax(self.q_table[state])
 
+    @staticmethod
+    @njit(fastmath=True)
     def update_q_table(
-        self,
-        state: tuple[np.intp, np.intp, np.intp, np.intp],
+        q_table,
+        state: tuple[np.float64, np.float64, np.float64, np.float64],
         action: np.intp,
         reward: float,
-        next_state: tuple[np.intp, np.intp, np.intp, np.intp],
+        next_state: tuple[np.float64, np.float64, np.float64, np.float64],
         terminal_state: bool,
-    ) -> None:
-        q_max_prime = np.max(self.q_table[next_state])
+        gamma: float,
+        alpha: float,
+    ) -> np.ndarray:
+        q_max_prime = np.max(q_table[next_state])
 
         if terminal_state:
-            error = reward + self.gamma * q_max_prime - self.q_table[state][action]
-            self.q_table[state][action] += self.alpha * error
+            error = reward + gamma * q_max_prime - q_table[state][action]
+            q_table[state][action] += alpha * error
         else:
-            error = reward - self.q_table[state + (action,)]
-            self.q_table[state][action] += self.alpha * error
+            error = reward - q_table[state + (action,)]
+            q_table[state][action] += alpha * error
+
+        return q_table
