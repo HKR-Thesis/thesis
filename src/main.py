@@ -1,5 +1,5 @@
-from .train_episodes import simulate_episodes
-from .simulate_learned_strategy import simulate_learned_strategy
+from .train.train_episodes import simulate_episodes
+from .train.simulate_learned_strategy import simulate_learned_strategy
 import matplotlib.pyplot as plt
 import time
 

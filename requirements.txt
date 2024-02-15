@@ -4,3 +4,5 @@ ipywidgets
 pyqlearning
 scipy
 numba
+smbus2
+Jetson.GPIO

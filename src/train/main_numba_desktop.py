@@ -1,5 +1,5 @@
-from .numba_desktop.train_episodes import simulate_episodes
-from .numba_desktop.simulate_learned_strategy import simulate_learned_strategy
+from src.numba_desktop.train_episodes import simulate_episodes
+from src.numba_desktop.simulate_learned_strategy import simulate_learned_strategy
 import matplotlib.pyplot as plt
 import time
 

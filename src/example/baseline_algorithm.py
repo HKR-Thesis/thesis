@@ -6,8 +6,8 @@ Move the cart in the direction of the pendulum angle
 Goal is to keep the pendulum upright (theta = 0)
 """
 
-from .inverted_pendulum_simulator.src.inverted_pendulum import InvertedPendulum
-from .inverted_pendulum_simulator.src.inverted_pendulum_visualizer import (
+from src.inverted_pendulum_simulator.src.inverted_pendulum import InvertedPendulum
+from src.inverted_pendulum_simulator.src.inverted_pendulum_visualizer import (
     InvertedPendulumVisualizer,
 )
 

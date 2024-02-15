@@ -1,5 +1,5 @@
 import numpy as np
-from .inverted_pendulum_simulator.src.inverted_pendulum import InvertedPendulum
+from src.inverted_pendulum_simulator.src.inverted_pendulum import InvertedPendulum
 
 
 class QLearning:
