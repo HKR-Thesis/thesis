@@ -2,13 +2,14 @@ from src.numba_desktop.train_episodes import simulate_episodes
 from src.numba_desktop.simulate_learned_strategy import simulate_learned_strategy
 import matplotlib.pyplot as plt
 import time
+from datetime import datetime
 
 
 def reward_plot(total_rewards: list[float]):
     plt.plot(total_rewards)
     plt.xlabel("Episode")
     plt.ylabel("Total Reward")
-    plt.show()
+    plt.savefig("figures/" + datetime.today().strftime("%Y-%m-%d-%hr-%m-%s") + ".png")
 
 
 def save_time(start_time, end_time):
