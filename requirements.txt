@@ -6,3 +6,4 @@ scipy
 numba
 smbus2
 Jetson.GPIO
+tensorflow
