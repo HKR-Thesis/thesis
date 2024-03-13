@@ -1,17 +1,18 @@
 #!/bin/bash
 
 # Run the first command in the background and capture its output (which is the process ID)
-python3 -m src.main &
+pid=$(.venv/bin/python3.10 -m src.main &)
 
-# Capture the PID of the background process
-pid=$!
+wait $!
+
+echo $pid
 
 # Check if the PID is valid
 if [[ -n "$pid" ]]; then
     echo "Process ID: $pid"
 
     # Run the second command with the captured PID
-    python3 measure_main.py "$pid" measurements
+    .venv/bin/python3.10 measure_main.py "$pid" measurements
 else
     echo "Failed to retrieve process ID."
     exit 1
