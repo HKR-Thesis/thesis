@@ -52,7 +52,7 @@ def simulate_episodes(num_ep: int):
             rewards_episode.append(reward)
             q_learning.update_q_table(disc_state, action, reward, next_state_disc, done)  # type: ignore
 
-        print(f"Episode {episode_index} - Total reward: {sum(rewards_episode)}")
+        # print(f"Episode {episode_index} - Total reward: {sum(rewards_episode)}")
         total_rewards.append(sum(rewards_episode))
 
     return q_learning, total_rewards
