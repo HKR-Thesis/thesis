@@ -69,7 +69,7 @@ def simulate_episodes(num_ep: int):
                 q_learning.alpha,
             )
 
-        print(f"Episode {episode_index} - Total reward: {sum(rewards_episode)}")
+        # print(f"Episode {episode_index} - Total reward: {sum(rewards_episode)}")
         total_rewards.append(sum(rewards_episode))
 
     return q_learning, total_rewards
