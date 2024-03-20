@@ -24,7 +24,6 @@ def save_time(start_time, end_time):
 
 def main():
     pid = os.getpid()
-    print(f"{pid}")
     start_time = time.time()
     q_learning, total_rewards = simulate_episodes(15000)
     end_time = time.time()
