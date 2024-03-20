@@ -8,3 +8,5 @@ smbus2
 Jetson.GPIO
 tensorflow
 onnx
+panda
+PyQt5
