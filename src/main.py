@@ -18,9 +18,7 @@ def main():
             _, _ = numba_sim(15000)
         elif training_type == 'dql':
             print('Not yet implemented. Exiting ..')
-
     except Exception as e:
         print(f"Something went wrong here: {e.with_traceback}")
 
-if __name__ == "__main__":
-    main()
+main()
