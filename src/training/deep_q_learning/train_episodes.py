@@ -1,4 +1,4 @@
-from src.deep_q_learning.deep_q_learning import DeepQLearning
+from src.training.deep_q_learning.deep_q_learning import DeepQLearning
 from src.inverted_pendulum_simulator.src.inverted_pendulum import InvertedPendulum
 import numpy as np
 

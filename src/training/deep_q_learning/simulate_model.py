@@ -1,20 +1,11 @@
-# you will also need to install MoviePy, and you do not need to import it explicitly
-# pip install moviepy
-
-# import Keras
+import numpy as np
 import keras
 
-# import the class
-from src.deep_q_learning.deep_q_learning import DeepQLearning
-from ..inverted_pendulum_simulator.src.inverted_pendulum import InvertedPendulum
-from ..inverted_pendulum_simulator.src.inverted_pendulum_visualizer import (
+from src.training.deep_q_learning.deep_q_learning import DeepQLearning
+from src.inverted_pendulum_simulator.src.inverted_pendulum import InvertedPendulum
+from src.inverted_pendulum_simulator.src.inverted_pendulum_visualizer import (
     InvertedPendulumVisualizer,
 )
-
-
-# numpy
-import numpy as np
-
 
 def simulate_model(loaded_model, episodes: int) -> None:
     env = InvertedPendulum()

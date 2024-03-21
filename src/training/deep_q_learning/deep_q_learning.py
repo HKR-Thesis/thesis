@@ -2,11 +2,9 @@ import numpy as np
 import random
 from tensorflow.python.keras.layers import Dense
 from tensorflow.python.keras.models import Sequential
-import tensorflow.python.keras.optimizers as optimizers
 from collections import deque
 from tensorflow import gather_nd
 from tensorflow.python.keras.losses import mean_squared_error
-
 
 class DeepQLearning:
     def __init__(self, config: dict) -> None:

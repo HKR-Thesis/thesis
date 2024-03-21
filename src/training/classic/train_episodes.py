@@ -1,6 +1,5 @@
-import numpy as np
 from src.inverted_pendulum_simulator.src.inverted_pendulum import InvertedPendulum
-from src.q_learning.q_learning import QLearning
+from src.training.classic.q_learning import QLearning
 
 
 def simulate_episodes(num_ep: int):

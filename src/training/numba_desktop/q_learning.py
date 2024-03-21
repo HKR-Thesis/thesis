@@ -1,7 +1,5 @@
 import numpy as np
-from ..inverted_pendulum_simulator.src.inverted_pendulum import InvertedPendulum
 from numba import njit
-
 
 class QLearning:
     def __init__(self, config: list) -> None:

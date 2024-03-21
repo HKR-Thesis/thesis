@@ -17,4 +17,4 @@ if __name__ == '__main__':
         training_type = sys.argv[1]
         measure(training_type)
     else:
-        print(f'Usage: python3.x src.benchmarking.measure <training_type>')
+        print(f'Usage: python3.x src.benchmarking.benchmark_training <training_type>')
