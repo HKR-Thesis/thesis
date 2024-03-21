@@ -3,8 +3,8 @@ import sys
 import threading
 
 def print_output(stream):
-    for line in iter(stream.readline, b''):
-        print(line.decode(), end='')
+    for line in iter(stream.readline, ''):
+        print(line, end='')
 
 def measure(training_type):
     print("Calling main process")
@@ -13,7 +13,7 @@ def measure(training_type):
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         bufsize=1,
-        universal_newlines=True
+        text=True
     )
     
     stdout_thread = threading.Thread(target=print_output, args=(main_proc.stdout,))
