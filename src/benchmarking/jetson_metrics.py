@@ -30,22 +30,21 @@ def measure(target_pid):
     filename = f"/media/nano/Nano Micro SD/measurements/benchmarks/metrics_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.csv"
 
     with jtop() as jetson:
-        if jetson.ok():
-            with open(filename, mode='w', newline='') as file:
-                fieldnames = [
-                    'Time', 'CPU Util', 'GPU Util', 
-                    'MEM Util', 'CPU Temp', 'GPU Temp', 
-                    'CPU Voltage', 'CPU Current', 'GPU Voltage', 
-                    'GPU Current', 'Total Voltage', 'Total Current', 
-                    'Average Power Consumption'
-                ]
-                writer = csv.DictWriter(file, fieldnames=fieldnames)
-                writer.writeheader()
+        with open(filename, mode='w', newline='') as file:
+            fieldnames = [
+                'Time', 'CPU Util', 'GPU Util', 
+                'MEM Util', 'CPU Temp', 'GPU Temp', 
+                'CPU Voltage', 'CPU Current', 'GPU Voltage', 
+                'GPU Current', 'Total Voltage', 'Total Current', 
+                'Average Power Consumption'
+            ]
+            writer = csv.DictWriter(file, fieldnames=fieldnames)
+            writer.writeheader()
 
-                while process_is_running(target_pid):
-                    metrics = get_metrics(jetson)
-                    writer.writerow(metrics)
-                    time.sleep(2)
+            while process_is_running(target_pid) and jetson.ok():
+                metrics = get_metrics(jetson)
+                writer.writerow(metrics)
+                time.sleep(2.5)
                 
     print('Finished collecting metrics - (target process killed)')
 

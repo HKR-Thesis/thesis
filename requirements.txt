@@ -10,3 +10,4 @@ tensorflow
 onnx
 panda
 PyQt5
+jetson-stats

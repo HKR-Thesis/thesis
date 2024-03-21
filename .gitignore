@@ -6,4 +6,3 @@ __pycache__/
 visualizations/
 figures/
 trained_model_temp.h5
-out/
