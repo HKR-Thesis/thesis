@@ -30,7 +30,6 @@ def measure(target_pid):
     filename = f"/media/nano/Nano Micro SD/measurements/benchmarks/metrics_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.csv"
 
     with jtop() as jetson:
-        print("MEASURING")
         with open(filename, mode='w', newline='') as file:
             fieldnames = [
                 'Time', 'CPU Util', 'GPU Util', 
@@ -49,5 +48,9 @@ def measure(target_pid):
                 
     print('Finished collecting metrics - (target process killed)')
 
-target_pid = int(sys.argv[1])
-measure(target_pid)
+if __name__ == '__main__':
+    if len(sys.argv) < 2:
+        print("Usage: python3.x src/benchmarking/jetson_metrics.py <target_pid>")
+        sys.exit(1)
+    target_pid = int(sys.argv[1])
+    measure(target_pid)
