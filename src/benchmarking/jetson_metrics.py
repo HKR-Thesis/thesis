@@ -2,13 +2,6 @@ import csv, time, sys, os
 from datetime import datetime
 from jtop import jtop
 
-def process_is_running(target_pid) -> bool:
-    try:
-        os.kill(target_pid, 0)
-        return True
-    except OSError:
-        return False
-
 def get_metrics(jetson) -> dict:
     return {
         'Time': datetime.now().strftime('%H:%M:%S'),
@@ -28,7 +21,6 @@ def get_metrics(jetson) -> dict:
 
 def measure(target_pid):
     filename = f"/media/nano/Nano Micro SD/measurements/benchmarks/metrics_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.csv"
-
     with jtop() as jetson:
         with open(filename, mode='w', newline='') as file:
             fieldnames = [
@@ -41,12 +33,12 @@ def measure(target_pid):
             writer = csv.DictWriter(file, fieldnames=fieldnames)
             writer.writeheader()
 
-            while process_is_running(target_pid) and jetson.ok():
+            while jetson.ok():
                 metrics = get_metrics(jetson)
                 writer.writerow(metrics)
                 time.sleep(2.5)
                 
-    print('Finished collecting metrics - (target process killed)')
+    print(f'Finished collecting metrics - (calling process, {target_pid}, killed)')
 
 if __name__ == '__main__':
     if len(sys.argv) < 2:
