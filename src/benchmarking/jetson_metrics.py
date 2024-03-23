@@ -19,8 +19,8 @@ def get_metrics(jetson) -> dict:
         'Average Power Consumption': jetson.power['tot']['avg']
     }
 
-def measure(target_pid):
-    filename = f"/media/nano/Nano Micro SD/measurements/benchmarks/metrics_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.csv"
+def measure(target_pid, training_type):
+    filename = f"/media/nano/Nano Micro SD/measurements/benchmarks/metrics-{training_type}_{datetime.now().strftime('%Y-%m-%d@%H-%M-%S')}.csv"
     with jtop() as jetson:
         with open(filename, mode='w', newline='') as file:
             fieldnames = [
@@ -41,8 +41,9 @@ def measure(target_pid):
     print(f'Finished collecting metrics - (calling process, {target_pid}, killed)')
 
 if __name__ == '__main__':
-    if len(sys.argv) < 2:
-        print("Usage: python3.x src/benchmarking/jetson_metrics.py <target_pid>")
+    if len(sys.argv) < 3:
+        print("Usage: python3.x src/benchmarking/jetson_metrics.py <target_pid> <training_type>")
         sys.exit(1)
     target_pid = int(sys.argv[1])
-    measure(target_pid)
+    training_type = sys.argv[2]
+    measure(target_pid, training_type)

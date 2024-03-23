@@ -47,7 +47,7 @@ def get_metrics_path():
     uname = platform.uname()
     if uname.system == 'Linux' and 'tegra' in uname.release:
         return benchmark_scripts['embedded']
-    elif uname.system == 'Windows':
+    elif uname.system == 'Linux' and 'tegra' not in uname.release:
         return benchmark_scripts['server']
     return None
 
