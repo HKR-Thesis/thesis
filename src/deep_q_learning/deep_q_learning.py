@@ -1,11 +1,10 @@
 import numpy as np
 import random
-from tensorflow.python.keras.layers import Dense
-from tensorflow.python.keras.models import Sequential
-import tensorflow.python.keras.optimizers as optimizers
 from collections import deque
+from keras.layers import Dense
+from keras.models import Sequential
+from keras.losses import mean_squared_error
 from tensorflow import gather_nd
-from tensorflow.python.keras.losses import mean_squared_error
 
 
 class DeepQLearning:
@@ -18,8 +17,7 @@ class DeepQLearning:
                 "action_dimension": action_dimension,
                 "replay_buffer_size": replay_buffer_size,
                 "batch_replay_buffer_size": batch_replay_buffer_size,
-                "update_target_network_period": update_target_network_period,
-                "counter_update_target_network": counter_update_target_network,
+                "tn_update_period": tn_update_period,
             }:
                 self.gamma = gamma
                 self.epsilon = epsilon
@@ -27,34 +25,26 @@ class DeepQLearning:
                 self.action_dimension = action_dimension
                 self.replay_buffer_size = replay_buffer_size
                 self.batch_replay_buffer_size = batch_replay_buffer_size
-                self.update_target_network_period = update_target_network_period
-                self.counter_update_target_network = counter_update_target_network
+                self.tn_update_period = tn_update_period
             case _:
                 raise ValueError("Invalid configuration")
 
         self.replay_buffer = deque(maxlen=self.replay_buffer_size)
 
-        self.main_network = self.create_network()
+        self.online_network = self.create_network()
         self.target_network = self.create_network()
-        self.target_network.set_weights(self.main_network.get_weights())
+        self.target_network.set_weights(self.online_network.get_weights())
+        self.tn_update_counter = 0
         self.actions = []
 
-    def loss_fn(self, y_true, y_pred):
-        s1, s2 = y_true.shape
-        indices = np.zeros(shape=(s1, s2))
-        indices[:, 0] = np.arange(s1)
-        indices[:, 1] = self.actions
-        loss = mean_squared_error(
-            gather_nd(y_true, indices=indices.astype(int)),
-            gather_nd(y_pred, indices=indices.astype(int)),
-        )
-        return loss
-
     def create_network(self):
-        model = Sequential()
-        model.add(Dense(128, input_dim=self.state_dimension, activation="relu"))
-        model.add(Dense(56, activation="relu"))
-        model.add(Dense(self.action_dimension, activation="linear"))
+        model = Sequential(
+            [
+                Dense(64, input_dim=self.state_dimension, activation="relu"),
+                Dense(64, activation="relu"),
+                Dense(self.action_dimension, activation="linear"),
+            ]
+        )
         model.compile(
             optimizer="rmsprop",
             loss=self.loss_fn,
@@ -62,60 +52,79 @@ class DeepQLearning:
         )
         return model
 
-    def select_action(self, state, index):
-        import numpy as np
+    def loss_fn(self, true, pred):
+        s1, s2 = true.shape
+        print("Shape", s1, s2)
 
-        if index < 1:
-            return np.random.choice(self.action_dimension)
-        randomNumber = np.random.random()
-        if index > 200:
-            self.epsilon = 0.999 * self.epsilon
-        if randomNumber < self.epsilon:
-            return np.random.choice(self.action_dimension)
+        indices = np.zeros(shape=(s1, s2))
+        indices[:, 0] = np.arange(s1)
+        indices[:, 1] = self.actions
+
+        loss = mean_squared_error(
+            gather_nd(true, indices=indices.astype(int)),
+            gather_nd(pred, indices=indices.astype(int)),
+        )
+
+        return loss
+
+    def select_action(self, state, episode_index):
+        if episode_index > 400:
+            self.epsilon *= 0.999
+        if episode_index < 2:
+            return np.random.choice([0, 1])
+
+        random_number = np.random.random()
+
+        if random_number < self.epsilon:
+            return np.random.choice([0, 1])
         else:
-            Qvalues = self.main_network.predict([state])
-            return np.random.choice(np.where(Qvalues[0, :] == np.max(Qvalues[0, :]))[0])
+            q_values = self.online_network.predict([state])
+            return np.argmax(q_values[0])
+
+    def sample_batches(self):
+        current_batch = np.zeros(shape=(self.batch_replay_buffer_size, 4))
+        next_batch = np.zeros(shape=(self.batch_replay_buffer_size, 4))
+        random_sample_batch = random.sample(
+            self.replay_buffer, self.batch_replay_buffer_size
+        )
+
+        for index, state_tuple in enumerate(random_sample_batch):
+            current_batch[index] = state_tuple[0]
+            next_batch[index] = state_tuple[3]
+
+        return random_sample_batch, current_batch, next_batch
 
     def train_network(self):
-        if len(self.replay_buffer) > self.batch_replay_buffer_size:
-            randomSampleBatch = random.sample(
-                self.replay_buffer, self.batch_replay_buffer_size
-            )
-            currentStateBatch = np.zeros(shape=(self.batch_replay_buffer_size, 4))
-            nextStateBatch = np.zeros(shape=(self.batch_replay_buffer_size, 4))
-            for index, tupleS in enumerate(randomSampleBatch):
-                currentStateBatch[index, :] = tupleS[0]
-                nextStateBatch[index, :] = tupleS[3]
-            QnextStateTargetNetwork = self.target_network.predict(nextStateBatch)
-            QcurrentStateMainNetwork = self.main_network.predict(currentStateBatch)
-            inputNetwork = currentStateBatch
-            outputNetwork = np.zeros(shape=(self.batch_replay_buffer_size, 2))
-            self.actions = []
-            for index, (
-                currentState,
-                action,
-                reward,
-                nextState,
-                terminated,
-            ) in enumerate(randomSampleBatch):
-                if terminated:
-                    y = reward
-                else:
-                    y = reward + self.gamma * np.max(QnextStateTargetNetwork[index])
-                self.actions.append(action)
-                outputNetwork[index] = QcurrentStateMainNetwork[index]
-                outputNetwork[index, action] = y
-            self.main_network.fit(
-                inputNetwork,
-                outputNetwork,
-                batch_size=self.batch_replay_buffer_size,
-                epochs=100,
-            )
-            self.counter_update_target_network += 1
-            if self.counter_update_target_network > (
-                self.update_target_network_period - 1
-            ):
-                self.target_network.set_weights(self.main_network.get_weights())
-                print("Target network updated!")
-                print("Counter value {}".format(self.counter_update_target_network))
-                self.counter_update_target_network = 0
+        if len(self.replay_buffer) <= self.batch_replay_buffer_size:
+            return
+
+        random_sample_batch, current_batch, next_batch = self.sample_batches()
+
+        tn_next_state = self.target_network.predict(next_batch)
+        on_current_state = self.online_network.predict(current_batch)
+
+        input_network = current_batch
+        output_network = np.zeros(shape=(self.batch_replay_buffer_size, 2))
+        self.actions = []
+
+        for index, (_, action, reward, _, terminated) in enumerate(random_sample_batch):
+            if terminated:
+                reward_with_error = reward
+            else:
+                reward_with_error = reward + self.gamma * np.max(tn_next_state[index])
+            self.actions.append(action)
+
+            output_network[index] = on_current_state[index]
+            output_network[index, action] = reward_with_error
+
+        self.online_network.fit(
+            input_network,
+            output_network,
+            batch_size=self.batch_replay_buffer_size,
+            epochs=100,
+        )
+        self.tn_update_counter += 1
+
+        if self.tn_update_counter > (self.tn_update_period - 1):
+            self.target_network.set_weights(self.online_network.get_weights())
+            self.tn_update_counter = 0

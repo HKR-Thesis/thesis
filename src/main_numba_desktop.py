@@ -31,8 +31,8 @@ def main():
     end_time = time.time()
     save_time(start_time, end_time)
     # Disabled while measuring.
-    # reward_plot(total_rewards)
-    # simulate_learned_strategy(q_learning, 1000)  # type: ignore
+    reward_plot(total_rewards)
+    simulate_learned_strategy(q_learning, 1000)  # type: ignore
     # print(q_learning.q_table)
     # print(total_rewards)
 

@@ -5,4 +5,5 @@ __pycache__/
 .venv/
 visualizations/
 figures/
-trained_model_temp.h5
+trained_model*
+execution_results*
