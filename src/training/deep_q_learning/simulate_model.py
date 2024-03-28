@@ -24,6 +24,6 @@ def simulate_model(loaded_model, episodes: int) -> None:
 
 if __name__ == "__main__":
     loaded_model = keras.models.load_model(
-        "trained_model_temp.h5", custom_objects={"my_loss_fn": DeepQLearning.loss_fn}
+        "trained_model-dqt.h5", custom_objects={"loss_fn": DeepQLearning.loss_fn}
     )
     simulate_model(loaded_model, 500)
