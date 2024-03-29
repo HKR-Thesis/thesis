@@ -2,6 +2,8 @@ from .train.train_episodes import simulate_episodes
 from .train.simulate_learned_strategy import simulate_learned_strategy
 import matplotlib.pyplot as plt
 import os
+import numpy as np
+import random
 import time
 
 
@@ -23,6 +25,9 @@ def save_time(start_time, end_time):
 
 
 def main():
+    np.random.seed(42)
+    random.seed(42)
+
     pid = os.getpid()
     start_time = time.time()
     q_learning, total_rewards = simulate_episodes(15000)

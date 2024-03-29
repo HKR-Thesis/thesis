@@ -1,4 +1,4 @@
-from src.deep_q_learning.deep_q_learning import DeepQLearning
+from src.deep_q_learning_.deep_q_learning import DeepQLearning
 from src.inverted_pendulum_simulator.src.inverted_pendulum import InvertedPendulum
 import numpy as np
 
@@ -11,7 +11,6 @@ def simulate_episodes(num_ep: int):
         "action_dimension": 2,
         "replay_buffer_size": 300,
         "batch_replay_buffer_size": 100,
-        "tn_update_period": 10,
     }
 
     env = InvertedPendulum()
@@ -39,5 +38,5 @@ def simulate_episodes(num_ep: int):
         total_rewards.append(np.sum(rewards_ep))
 
     deep_Q_Learning.online_network.summary()
-    deep_Q_Learning.online_network.save("trained_model-dqt.h5")
+    deep_Q_Learning.online_network.save("trained_model-dq.h5")
     return total_rewards

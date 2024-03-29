@@ -1,6 +1,6 @@
-from src.deep_q_learning.train_episodes import simulate_episodes
-from src.deep_q_learning.simulate_model import simulate_model
-from src.deep_q_learning.deep_q_learning import DeepQLearning
+from src.deep_q_learning_.train_episodes import simulate_episodes
+from src.deep_q_learning_.simulate_model import simulate_model
+from src.deep_q_learning_.deep_q_learning import DeepQLearning
 import matplotlib.pyplot as plt
 import time
 import keras

@@ -16,7 +16,6 @@ class DeepQLearning:
                 "action_dimension": action_dimension,
                 "replay_buffer_size": replay_buffer_size,
                 "batch_replay_buffer_size": batch_replay_buffer_size,
-                "tn_update_period": tn_update_period,
             }:
                 self.gamma = gamma
                 self.epsilon = epsilon
@@ -24,23 +23,19 @@ class DeepQLearning:
                 self.action_dimension = action_dimension
                 self.replay_buffer_size = replay_buffer_size
                 self.batch_replay_buffer_size = batch_replay_buffer_size
-                self.tn_update_period = tn_update_period
             case _:
                 raise ValueError("Invalid configuration")
 
         self.replay_buffer = deque(maxlen=self.replay_buffer_size)
 
         self.online_network = self.create_network()
-        self.target_network = self.create_network()
-        self.target_network.set_weights(self.online_network.get_weights())
-        self.tn_update_counter = 0
         self.actions = np.array([])
 
     def create_network(self):
         model = Sequential(
             [
-                Dense(128, input_dim=self.state_dimension, activation="elu"),
-                Dense(64, activation="elu"),
+                Dense(128, input_dim=self.state_dimension, activation="relu"),
+                Dense(64, activation="relu"),
                 Dense(self.action_dimension, activation="linear"),
             ]
         )
@@ -84,17 +79,15 @@ class DeepQLearning:
 
         random_sample_batch = [self.replay_buffer[i] for i in indices]
         current_batch = np.array([transition[0] for transition in random_sample_batch])
-        next_batch = np.array([transition[3] for transition in random_sample_batch])
 
-        return random_sample_batch, current_batch, next_batch
+        return random_sample_batch, current_batch
 
     def train_network(self):
         if len(self.replay_buffer) <= self.batch_replay_buffer_size:
             return
 
-        random_sample_batch, current_batch, next_batch = self.sample_batches()
+        random_sample_batch, current_batch = self.sample_batches()
 
-        tn_next_state = self.target_network.predict(next_batch, verbose=0)  # type: ignore
         on_current_state = self.online_network.predict(current_batch, verbose=0)  # type: ignore
 
         input_network = current_batch
@@ -105,7 +98,7 @@ class DeepQLearning:
             if terminated:
                 reward_with_error = reward
             else:
-                reward_with_error = reward + self.gamma * np.max(tn_next_state[index])
+                reward_with_error = reward + self.gamma
             self.actions[index] = action
 
             output_network[index] = on_current_state[index]
@@ -118,8 +111,3 @@ class DeepQLearning:
             epochs=100,
             verbose=0,  # type: ignore
         )
-        self.tn_update_counter += 1
-
-        if self.tn_update_counter > (self.tn_update_period - 1):
-            self.target_network.set_weights(self.online_network.get_weights())
-            self.tn_update_counter = 0

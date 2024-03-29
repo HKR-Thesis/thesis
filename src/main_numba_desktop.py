@@ -3,6 +3,8 @@ from src.numba_desktop.simulate_learned_strategy import simulate_learned_strateg
 import matplotlib.pyplot as plt
 import os
 import time
+import numpy as np
+import random
 from datetime import datetime
 
 
@@ -24,6 +26,9 @@ def save_time(start_time, end_time):
 
 
 def main():
+    np.random.seed(42)
+    random.seed(42)
+
     pid = os.getpid()
     print(f"{pid}")
     start_time = time.time()
