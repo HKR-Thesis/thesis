@@ -54,7 +54,6 @@ class DeepQLearning:
 
     def loss_fn(self, true, pred):
         s1, s2 = true.shape
-        print("Shape", s1, s2)
 
         indices = np.zeros(shape=(s1, s2))
         indices[:, 0] = np.arange(s1)
@@ -68,9 +67,9 @@ class DeepQLearning:
         return loss
 
     def select_action(self, state, episode_index):
-        if episode_index > 400:
+        if episode_index > 20:
             self.epsilon *= 0.999
-        if episode_index < 2:
+        if episode_index < 1:
             return np.random.choice([0, 1])
 
         random_number = np.random.random()
@@ -78,7 +77,7 @@ class DeepQLearning:
         if random_number < self.epsilon:
             return np.random.choice([0, 1])
         else:
-            q_values = self.online_network.predict([state])
+            q_values = self.online_network.predict([state], verbose=0)  # type: ignore
             return np.argmax(q_values[0])
 
     def sample_batches(self):
@@ -100,8 +99,8 @@ class DeepQLearning:
 
         random_sample_batch, current_batch, next_batch = self.sample_batches()
 
-        tn_next_state = self.target_network.predict(next_batch)
-        on_current_state = self.online_network.predict(current_batch)
+        tn_next_state = self.target_network.predict(next_batch, verbose=0)  # type: ignore
+        on_current_state = self.online_network.predict(current_batch, verbose=0)  # type: ignore
 
         input_network = current_batch
         output_network = np.zeros(shape=(self.batch_replay_buffer_size, 2))
@@ -122,6 +121,7 @@ class DeepQLearning:
             output_network,
             batch_size=self.batch_replay_buffer_size,
             epochs=100,
+            verbose=0,  # type: ignore
         )
         self.tn_update_counter += 1
 

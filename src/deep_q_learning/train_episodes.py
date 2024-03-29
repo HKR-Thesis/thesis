@@ -11,28 +11,28 @@ def simulate_episodes(num_ep: int):
         "action_dimension": 2,
         "replay_buffer_size": 300,
         "batch_replay_buffer_size": 100,
-        "tn_update_period": 100,
+        "tn_update_period": 20,
     }
 
     env = InvertedPendulum()
     deep_Q_Learning = DeepQLearning(config)
     total_rewards = []
 
-    for indexEpisode in range(num_ep):
-        print(f"Simulating episode {indexEpisode}")
+    for i in range(num_ep):
+        print(f"Simulating episode {i}")
 
         rewards_ep = []
         current_state = env.reset()
         terminal = False
         while not terminal:
-            action = deep_Q_Learning.select_action(current_state, indexEpisode)
-            nextState, reward, terminal = env.simulate_step(action)
+            action = deep_Q_Learning.select_action(current_state, i)
+            new_state, reward, terminal = env.simulate_step(action)
             rewards_ep.append(reward)
             deep_Q_Learning.replay_buffer.append(
-                (current_state, action, reward, nextState, terminal)
+                (current_state, action, reward, new_state, terminal)
             )
             deep_Q_Learning.train_network()
-            current_state = nextState
+            current_state = new_state
 
         print(f"Sum of rewards {np.sum(rewards_ep)}")
 

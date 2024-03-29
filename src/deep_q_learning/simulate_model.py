@@ -24,8 +24,8 @@ def simulate_model(loaded_model, episodes: int) -> None:
 
     for _ in range(episodes):
         states.append(env.state)
-        Qvalues = loaded_model.predict([env.state])
-        action = np.random.choice(np.where(Qvalues[0, :] == np.max(Qvalues[0, :]))[0])
+        q_values = loaded_model.predict([env.state])
+        action = np.argmax(q_values[0])
         env.simulate_step(action)
 
     visualizer.animate_states(states)

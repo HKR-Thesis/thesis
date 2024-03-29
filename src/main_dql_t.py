@@ -1,5 +1,6 @@
 from src.deep_q_learning.train_episodes import simulate_episodes
 from src.deep_q_learning.simulate_model import simulate_model
+from src.deep_q_learning.deep_q_learning import DeepQLearning
 import matplotlib.pyplot as plt
 import time
 import keras
@@ -25,12 +26,14 @@ def save_time(start_time, end_time):
 
 def main():
     start_time = time.time()
-    total_rewards = simulate_episodes(1000)
+    total_rewards = simulate_episodes(200)
     end_time = time.time()
     save_time(start_time, end_time)
     reward_plot(total_rewards)
-    loaded_model = keras.models.load_model("trained_model-dqt.h5")
-    simulate_model(loaded_model, 1000)
+    loaded_model = keras.models.load_model(
+        "trained_model-dqt.h5", custom_objects={"loss_fn": DeepQLearning.loss_fn}
+    )
+    simulate_model(loaded_model, 255)
     print(total_rewards)
 
 
