@@ -1,12 +1,21 @@
 import subprocess
 import shutil
 import threading
+import matplotlib.pyplot as plt
+from datetime import datetime
 import platform
 
 benchmark_scripts = {
     "embedded": "src/benchmarking/jetson_metrics.py",
     "server": "src/benchmarking/server_metrics.py",
 }
+
+
+def reward_plot(total_rewards: list[float]):
+    plt.plot(total_rewards)
+    plt.xlabel("Episode")
+    plt.ylabel("Total Reward")
+    plt.savefig("figures/" + datetime.today().strftime("%Y-%m-%d-%hr-%m-%s") + ".png")
 
 
 def print_pipe(stream, prefix=""):

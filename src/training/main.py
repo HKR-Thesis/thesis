@@ -1,6 +1,7 @@
 import sys
 import random
 import numpy as np
+from src.util import reward_plot
 from src.training.classic.train_episodes import simulate_episodes as classic_sim
 from src.training.numba_desktop.train_episodes import simulate_episodes as numba_sim
 from src.training.deep_q_learning.train_episodes import simulate_episodes as dql_sim
@@ -21,14 +22,18 @@ def train():
         random.seed(42)
         training_type = sys.argv[1]
         print(f"Attempting training for {training_type}")
+        rewards = None
         if training_type == "classic":
-            _, _ = classic_sim(15000)
+            _, rewards = classic_sim(15000)
         elif training_type == "numba":
-            _, _ = numba_sim(15000)
+            _, rewards = numba_sim(15000)
         elif training_type == "dql-target":
-            _ = dql_target_sim(100)
+            rewards = dql_target_sim(100)
         elif training_type == "dql":
-            _ = dql_sim(100)
+            rewards = dql_sim(100)
+
+        if rewards:
+            reward_plot(rewards)
     except Exception as e:
         print(f"Something went wrong here: {e.with_traceback}")
 
