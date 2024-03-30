@@ -7,4 +7,3 @@ visualizations/
 figures/
 trained_model*
 execution_results*
-Pipfile.lock
