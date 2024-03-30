@@ -1,0 +1,11 @@
+numpy
+matplotlib
+ipywidgets
+scipy
+numba
+smbus2
+jetson.gpio
+tensorflow
+onnx
+panda
+jetson-stats
