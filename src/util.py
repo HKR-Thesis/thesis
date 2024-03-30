@@ -1,11 +1,13 @@
 import subprocess
+import shutil
 import threading
 import platform
 
 benchmark_scripts = {
-    'embedded': 'src/benchmarking/jetson_metrics.py',
-    'server': 'src/benchmarking/server_metrics.py'
+    "embedded": "src/benchmarking/jetson_metrics.py",
+    "server": "src/benchmarking/server_metrics.py",
 }
+
 
 def print_pipe(stream, prefix=""):
     """
@@ -20,6 +22,7 @@ def print_pipe(stream, prefix=""):
         if not line:
             break
         print(f"{prefix}: {line.strip()}")
+
 
 def monitor_subprocess(proc, benchmark_proc=None):
     """
@@ -37,6 +40,7 @@ def monitor_subprocess(proc, benchmark_proc=None):
         if benchmark_proc.poll() is None:
             benchmark_proc.terminate()
 
+
 def get_metrics_path():
     """
     Returns the path to the metrics based on the current system.
@@ -45,34 +49,46 @@ def get_metrics_path():
         str: The path to the metrics.
     """
     uname = platform.uname()
-    if uname.system == 'Linux' and 'tegra' in uname.release:
-        return benchmark_scripts['embedded']
-    elif uname.system == 'Linux' and 'tegra' not in uname.release:
-        return benchmark_scripts['server']
+    if uname.system == "Linux" and "tegra" in uname.release:  # Jetson
+        return benchmark_scripts["embedded"]
+    elif (
+        uname.system == "Windows" or uname.system == "Darwin" or uname.system == "Linux"
+    ) and is_nvidia_gpu():  # Literally anything else with an NVIDIA GPU
+        return benchmark_scripts["server"]
     return None
+
+
+def is_nvidia_gpu():
+    """Check if an NVIDIA GPU is present on the system.
+
+    Returns:
+        bool: True if an NVIDIA GPU is present, False otherwise.
+    """
+    return shutil.which("nvidia-smi") is not None
+
 
 def run_process(command, output_prefix):
     """
     Run a given command as a subprocess and print its output and error streams in separate threads.
-    
+
     Args:
     - command: List of command line arguments to be executed.
     - output_prefix: Prefix string to be added to the output for identification.
-    
+
     Returns:
     - process: The subprocess.Popen object for further manipulation or inspection.
     """
     process = subprocess.Popen(
-        command,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        text=True,
-        bufsize=1
+        command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, bufsize=1
     )
-    
-    output_thread = threading.Thread(target=print_pipe, args=(process.stdout, f"{output_prefix} Output"))
-    error_thread = threading.Thread(target=print_pipe, args=(process.stderr, f"{output_prefix} Error"))
+
+    output_thread = threading.Thread(
+        target=print_pipe, args=(process.stdout, f"{output_prefix} Output")
+    )
+    error_thread = threading.Thread(
+        target=print_pipe, args=(process.stderr, f"{output_prefix} Error")
+    )
     output_thread.start()
     error_thread.start()
-    
+
     return process

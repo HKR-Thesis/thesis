@@ -1,6 +1,7 @@
 import numpy as np
 from numba import njit
 
+
 class QLearning:
     def __init__(self, config: list) -> None:
 
