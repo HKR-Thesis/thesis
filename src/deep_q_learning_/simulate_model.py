@@ -1,7 +1,7 @@
 import keras
-from src.training.deep_q_learning.deep_q_learning import DeepQLearning
-from src.inverted_pendulum_simulator.src.inverted_pendulum import InvertedPendulum
-from src.inverted_pendulum_simulator.src.inverted_pendulum_visualizer import (
+from src.deep_q_learning_.deep_q_learning import DeepQLearning
+from ..inverted_pendulum_simulator.src.inverted_pendulum import InvertedPendulum
+from ..inverted_pendulum_simulator.src.inverted_pendulum_visualizer import (
     InvertedPendulumVisualizer,
 )
 import numpy as np
@@ -24,6 +24,6 @@ def simulate_model(loaded_model, episodes: int) -> None:
 
 if __name__ == "__main__":
     loaded_model = keras.models.load_model(
-        "trained_model-dqt.h5", custom_objects={"loss_fn": DeepQLearning.loss_fn}
+        "trained_model-dq.h5", custom_objects={"loss_fn": DeepQLearning.loss_fn}
     )
     simulate_model(loaded_model, 500)
