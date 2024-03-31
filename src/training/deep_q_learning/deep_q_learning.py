@@ -5,7 +5,6 @@ from keras.models import Sequential
 from keras.losses import mean_squared_error
 import tensorflow as tf
 
-
 class DeepQLearning:
     def __init__(self, config: dict) -> None:
         match config:

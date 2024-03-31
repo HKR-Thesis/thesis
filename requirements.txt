@@ -1,13 +1,11 @@
 numpy
 matplotlib
 ipywidgets
-pyqlearning
 scipy
 numba
 smbus2
-Jetson.GPIO
+jetson.gpio
 tensorflow
 onnx
 panda
-PyQt5
 jetson-stats

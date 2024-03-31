@@ -1,4 +1,4 @@
-from ..inverted_pendulum_simulator.src.inverted_pendulum import InvertedPendulum
+from src.inverted_pendulum_simulator.src.inverted_pendulum import InvertedPendulum
 from .q_learning import QLearning
 import numpy as np
 

@@ -3,7 +3,7 @@ from src.inverted_pendulum_simulator.src.inverted_pendulum import InvertedPendul
 from src.inverted_pendulum_simulator.src.inverted_pendulum_visualizer import (
     InvertedPendulumVisualizer,
 )
-from src.train.q_learning import QLearning
+from src.training.classic.q_learning import QLearning
 
 
 def simulate_learned_strategy(q_learning: QLearning, episodes: int) -> None:
