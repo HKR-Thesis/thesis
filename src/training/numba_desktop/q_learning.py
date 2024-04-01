@@ -8,17 +8,16 @@ class QLearning:
         self.alpha = config[0]
         self.gamma = config[1]
         self.epsilon = config[2]
-        self.num_ep = config[3]
         self.bins = np.array(
-            [config[4], config[5], config[6], config[7]], dtype=np.int32
+            [config[3], config[4], config[5], config[6]], dtype=np.int32
         )
         self.low_bounds = np.array(
-            [config[8], config[9], config[10], config[11]], dtype=np.float64
+            [config[7], config[8], config[9], config[10]], dtype=np.float64
         )
         self.up_bounds = np.array(
-            [config[12], config[13], config[14], config[15]], dtype=np.float64
+            [config[11], config[12], config[13], config[14]], dtype=np.float64
         )
-        self.actions = [config[16], config[17]]
+        self.actions = [config[15], config[16]]
 
         self.q_table = np.random.uniform(
             low=0,

@@ -9,7 +9,6 @@ class QLearning:
                 "alpha": alpha,
                 "gamma": gamma,
                 "epsilon": epsilon,
-                "number_of_episodes": num_ep,
                 "bins": bins,
                 "low_bounds": low_bounds,
                 "up_bounds": up_bounds,
@@ -18,7 +17,6 @@ class QLearning:
                 self.alpha = alpha
                 self.gamma = gamma
                 self.epsilon = epsilon
-                self.num_ep = num_ep
                 self.bins = bins
                 self.low_bounds = low_bounds
                 self.up_bounds = up_bounds

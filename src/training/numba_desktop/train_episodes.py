@@ -10,7 +10,6 @@ def simulate_episodes(num_ep: int):
         1,  # "alpha": 0
         1,  # "gamma": 1
         0.2,  # "epsilon": 2
-        num_ep,  # "number_of_episodes": 3
         # "bins": {
         30,  # "theta": 4
         30,  # "theta_dot": 5
