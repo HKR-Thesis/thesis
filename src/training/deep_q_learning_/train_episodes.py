@@ -9,8 +9,8 @@ def simulate_episodes(num_ep: int):
         "epsilon": 0.2,
         "state_dimension": 4,
         "action_dimension": 2,
-        "replay_buffer_size": 300,
-        "batch_replay_buffer_size": 100,
+        "buffer_size": 300,
+        "batch_size": 100,
     }
 
     env = InvertedPendulum()

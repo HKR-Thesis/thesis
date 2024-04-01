@@ -14,19 +14,19 @@ class DeepQLearning:
                 "epsilon": epsilon,
                 "state_dimension": state_dimension,
                 "action_dimension": action_dimension,
-                "replay_buffer_size": replay_buffer_size,
-                "batch_replay_buffer_size": batch_replay_buffer_size,
+                "buffer_size": buffer_size,
+                "batch_size": batch_size,
             }:
                 self.gamma = gamma
                 self.epsilon = epsilon
                 self.state_dimension = state_dimension
                 self.action_dimension = action_dimension
-                self.replay_buffer_size = replay_buffer_size
-                self.batch_replay_buffer_size = batch_replay_buffer_size
+                self.buffer_size = buffer_size
+                self.batch_size = batch_size
             case _:
                 raise ValueError("Invalid configuration")
 
-        self.replay_buffer = deque(maxlen=self.replay_buffer_size)
+        self.replay_buffer = deque(maxlen=self.buffer_size)
 
         self.online_network = self.create_network()
         self.actions = np.array([])
@@ -34,8 +34,8 @@ class DeepQLearning:
     def create_network(self):
         model = Sequential(
             [
-                Dense(128, input_dim=self.state_dimension, activation="relu"),
-                Dense(64, activation="relu"),
+                Dense(128, input_dim=self.state_dimension, activation="elu"),
+                Dense(64, activation="elu"),
                 Dense(self.action_dimension, activation="linear"),
             ]
         )
@@ -55,9 +55,9 @@ class DeepQLearning:
         return loss
 
     def select_action(self, state, episode_index):
-        if episode_index > 20:
+        if episode_index > 400:
             self.epsilon *= 0.999
-        if episode_index < 1:
+        if episode_index < 200:
             return np.random.choice([0, 1])
 
         random_number = np.random.random()
@@ -69,12 +69,12 @@ class DeepQLearning:
             return np.argmax(q_values[0])
 
     def sample_batches(self):
-        if len(self.replay_buffer) < self.batch_replay_buffer_size:
+        if len(self.replay_buffer) < self.batch_size:
             raise ValueError("Not enough samples in replay_buffer")
 
         # Randomly sample indices
         indices = np.random.choice(
-            len(self.replay_buffer), self.batch_replay_buffer_size, replace=False
+            len(self.replay_buffer), self.batch_size, replace=False
         )
 
         random_sample_batch = [self.replay_buffer[i] for i in indices]
@@ -83,31 +83,31 @@ class DeepQLearning:
         return random_sample_batch, current_batch
 
     def train_network(self):
-        if len(self.replay_buffer) <= self.batch_replay_buffer_size:
+        if len(self.replay_buffer) <= self.batch_size:
             return
 
         random_sample_batch, current_batch = self.sample_batches()
 
-        on_current_state = self.online_network.predict(current_batch, verbose=0)  # type: ignore
+        on_curr_state = self.online_network.predict(current_batch, verbose=0)  # type: ignore
 
         input_network = current_batch
-        output_network = np.zeros(shape=(self.batch_replay_buffer_size, 2))
-        self.actions = np.zeros(shape=(self.batch_replay_buffer_size, 1))
+        output_network = np.zeros(shape=(self.batch_size, 2))
+        self.actions = np.zeros(shape=(self.batch_size, 1))
 
         for index, (_, action, reward, _, terminated) in enumerate(random_sample_batch):
             if terminated:
                 reward_with_error = reward
             else:
-                reward_with_error = reward + self.gamma
+                reward_with_error = reward + self.gamma * np.max(on_curr_state[index])
             self.actions[index] = action
 
-            output_network[index] = on_current_state[index]
+            output_network[index] = on_curr_state[index]
             output_network[index, action] = reward_with_error
 
         self.online_network.fit(
             input_network,
             output_network,
-            batch_size=self.batch_replay_buffer_size,
+            batch_size=self.batch_size,
             epochs=100,
             verbose=0,  # type: ignore
         )
