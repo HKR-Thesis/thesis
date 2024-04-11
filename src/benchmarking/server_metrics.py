@@ -17,8 +17,8 @@ def get_average_cpu_temperature():
         Average CPU temperature
     """
     temps = psutil.sensors_temperatures()
-    if "coretemp" in temps:
-        core_temps = temps["coretemp"]
+    if "k10temp" in temps:
+        core_temps = temps["k10temp"]
         avg_temp = sum(temp.current for temp in core_temps) / len(core_temps)
         return avg_temp
     return "N/A"
@@ -47,10 +47,17 @@ def get_cpu_power_consumption_one_shot():
             text=True,
         )
         output = result.stdout
+        error = result.stderr
 
-        pkg_watt_match = re.search(r"PkgWatt:\s*([\d.]+)", output)
-        if pkg_watt_match:
-            pkg_watt = float(pkg_watt_match.group(1))
+        pkg_watt_match_out = re.search(r"PkgWatt", output)
+        pkg_watt_match_err = re.search(r"PkgWatt", error)
+        if pkg_watt_match_out:
+            print(f"Output: {pkg_watt_match_out}")
+            pkg_watt = float(output.split()[3])
+            return pkg_watt
+        elif pkg_watt_match_err:
+            print(f"Error: {pkg_watt_match_err}")
+            pkg_watt = float(error.split()[3])
             return pkg_watt
     except Exception as e:
         print(f"Error reading CPU power consumption: {e}")
@@ -79,7 +86,7 @@ def get_metrics(process, nvml_handle):
     return {
         "Time": datetime.now().strftime("%H:%M:%S"),
         "CPU Util": process.cpu_percent(interval=1.0),
-        "GPU Util": nvml_handle.nvmlDeviceGetUtilizationRates(nvml_handle).gpu,
+        "GPU Util": pynvml.nvmlDeviceGetUtilizationRates(nvml_handle).gpu,
         "MEM Util": process.memory_percent(),
         "CPU Temp": get_average_cpu_temperature(),
         "GPU Temp": pynvml.nvmlDeviceGetTemperature(

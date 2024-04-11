@@ -2,12 +2,13 @@ numpy
 matplotlib
 ipywidgets
 scipy
+pandas
 numba
 smbus2
-jetson.gpio
+#jetson.gpio
 tensorflow
 onnx
 panda
 psutil
-jetson-stats
+#jetson-stats
 pynvml

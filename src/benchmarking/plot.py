@@ -48,7 +48,7 @@ def plot(csv_path):
                 benchmark_data["Time"],
                 (
                     benchmark_data[f"{value} Smooth"] / 1000
-                    if metric is "pwr_con"
+                    if metric == "pwr_con"
                     else benchmark_data[f"{value} Smooth"]
                 ),
                 label=value,
