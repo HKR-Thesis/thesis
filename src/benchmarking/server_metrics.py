@@ -5,7 +5,7 @@ import csv
 import subprocess
 import time
 import re
-from src.benchmarking.util import fieldnames
+from src.benchmarking.plot import fieldnames
 from datetime import datetime
 
 
@@ -118,7 +118,7 @@ def measure(target_pid, training_type):
             writer.writerow(metrics)
             time.sleep(2.5)
 
-    print(f"Finished collecting metrics - (calling process, {target_pid}, killed)")
+    print(f"Finished collecting metrics - (calling process <{target_pid}> killed)")
 
 
 if __name__ == "__main__":

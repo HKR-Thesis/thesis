@@ -64,7 +64,7 @@ def get_metrics_path():
         uname.system == "Windows" or uname.system == "Darwin" or uname.system == "Linux"
     ) and is_nvidia_gpu():  # Literally anything else with an NVIDIA GPU
         return benchmark_scripts["server"]
-    return None
+    return None  # Unsupported system for benchmarking
 
 
 def is_nvidia_gpu():

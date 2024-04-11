@@ -1,8 +1,8 @@
 import pandas as pd
+import sys
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 from datetime import datetime
-import sys
 from scipy.signal import savgol_filter
 
 fieldnames = [
@@ -12,26 +12,16 @@ fieldnames = [
     "MEM Util",
     "CPU Temp",
     "GPU Temp",
-    "CPU Voltage",
-    "CPU Current",
-    "GPU Voltage",
-    "GPU Current",
-    "Total Voltage",
-    "Total Current",
-    "Average Power Consumption",
+    "CPU Power Consumption",
+    "GPU Power Consumption",
 ]
 
 metric_groups = {
     "util": ["CPU Util", "GPU Util", "MEM Util"],
     "temp": ["CPU Temp", "GPU Temp"],
     "pwr_con": [
-        "CPU Voltage",
-        "CPU Current",
-        "GPU Voltage",
-        "GPU Current",
-        "Total Voltage",
-        "Total Current",
-        "Average Power Consumption",
+        "CPU Power Consumption",
+        "GPU Power Consumption",
     ],
 }
 
