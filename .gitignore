@@ -8,3 +8,4 @@ figures/
 trained_model*
 execution_results*
 *.deb
+out/*
