@@ -5,23 +5,31 @@ VENV=".venv"
 REQUIREMENTS="requirements.txt"
 
 function make_directories() {
+    echo "Creating directories .."
     mkdir -p out/
-    mkdir -p out/{logs,metrics,plots,server_measurements,tmp_model}
+    mkdir -p out/{tensorboard,metrics,plots,server_measurements,tmp_model}
 }
 
 function initialize_python_env() {
+    echo "Initializing python virtual environment .."
     python3 -m venv .venv
     source $VENV/bin/activate
-    while read requirement; do pip install "$requirement"; done < $REQUIREMENTS;
+    pip install --upgrade pip > /dev/null 2>&1
+    while read requirement; do
+        echo "Installing $requirement .."
+        pip install "$requirement" > /dev/null 2>&1
+    done < $REQUIREMENTS;
 }
 
 # Initializes ONLY CUDA and cudatoolkit using conda,
 # not the whole python environment
 function initialize_cuda_with_conda() {
+    echo "Initializing CUDA with conda .."
+
     wget https://repo.anaconda.com/archive/Anaconda3-latest-Linux-x86_64.sh
     bash Anaconda3-latest-Linux-x86_64.sh
 
-    shell=$(SHELL)
+    local shell="$SHELL"
     if [[ $shell == "/bin/bash" ]]; then
         echo "Initializing conda for bash"
         conda init bash
@@ -36,21 +44,13 @@ function initialize_cuda_with_conda() {
     conda create -n thesis-project python=3.11
     conda activate thesis-project
 
-    conda install -c anaconda nvcc cudatoolkit
+    conda install -c nvcc cudatoolkit
 }
 
-
 if [ ! -d "$VENV" ]; then
-    initialize_python_env
+    initialize_python_env;
 fi
 
 if [ ! -d "out/" ]; then
-    make_directories
-fi
-
-if [[ $(lsb_release -si 2> /dev/null) == "Ubuntu" ]]; then
-    initialize_cuda_with_conda
-else
-    echo "Conda initialization using this script is only compatible with Ubuntu."
-    exit 1
+    make_directories;
 fi

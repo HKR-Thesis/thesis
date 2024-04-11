@@ -2,6 +2,7 @@ import sys
 import random
 import numpy as np
 import tensorflow as tf
+import argparse
 from src.util import reward_plot
 from src.training.classic.train_episodes import simulate_episodes as classic_sim
 from src.training.numba_desktop.train_episodes import simulate_episodes as numba_sim
@@ -15,16 +16,24 @@ from src.training.deep_q_learning_.train_episodes import (
 types = ["classic", "numba", "dql-target", "dql"]
 
 
-def train():
-    if len(sys.argv) < 2 or sys.argv[1] not in types:
-        print("Usage: python3.x -m src.training.main <training_type>")
-        print(f"Valid values for <training_type> include {', '.join(types)}")
-        sys.exit(1)
+def parse_arguments():
+    parser = argparse.ArgumentParser(
+        description="Run different types of training simulations."
+    )
+    parser.add_argument(
+        "--train",
+        choices=types,
+        required=True,
+        help="Specify the type of training to perform.",
+    )
+    return parser.parse_args()
+
+
+def train(training_type):
     try:
         np.random.seed(42)
         random.seed(42)
         tf.random.set_seed(42)
-        training_type = sys.argv[1]
         print(f"Attempting training for {training_type}")
         rewards = None
         if training_type == "classic":
@@ -43,4 +52,5 @@ def train():
 
 
 if __name__ == "__main__":
-    train()
+    args = parse_arguments()
+    train(args.train)

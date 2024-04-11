@@ -1,4 +1,6 @@
-import csv, time, sys
+import csv
+import time
+import argparse
 from datetime import datetime
 from src.benchmarking.plot import fieldnames
 from jtop import jtop
@@ -50,25 +52,31 @@ def measure(target_pid, training_type):
     """
     filename = f"/media/nano/Nano Micro SD/measurements/benchmarks/metrics-{training_type}_{datetime.now().strftime('%Y-%m-%d@%H-%M-%S')}.csv"
     with jtop() as jetson:
-        with jtop() as jetson:
-            with open(filename, mode="w", newline="") as file:
-                writer = csv.DictWriter(file, fieldnames=fieldnames)
-                writer.writeheader()
+        with open(filename, mode="w", newline="") as file:
+            writer = csv.DictWriter(file, fieldnames=fieldnames)
+            writer.writeheader()
 
-                while jetson.ok():
-                    metrics = get_metrics(jetson)
-                    writer.writerow(metrics)
-                    time.sleep(2.5)
+            while jetson.ok():
+                metrics = get_metrics(jetson)
+                writer.writerow(metrics)
+                time.sleep(2.5)
 
     print(f"Finished collecting metrics - (calling process <{target_pid}> killed)")
 
 
+def parse_arguments():
+    parser = argparse.ArgumentParser(
+        description="Collect metrics from a Jetson device."
+    )
+    parser.add_argument(
+        "--pid", type=int, required=True, help="Process ID of the target process."
+    )
+    parser.add_argument(
+        "--train", type=str, required=True, help="Specify the type of training"
+    )
+    return parser.parse_args()
+
+
 if __name__ == "__main__":
-    if len(sys.argv) < 3:
-        print(
-            "Usage: python3.x src/benchmarking/jetson_metrics.py <target_pid> <training_type>"
-        )
-        sys.exit(1)
-    target_pid = int(sys.argv[1])
-    training_type = sys.argv[2]
-    measure(target_pid, training_type)
+    args = parse_arguments()
+    measure(args.pid, args.train)

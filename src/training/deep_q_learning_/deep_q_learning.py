@@ -32,7 +32,9 @@ class DeepQLearning:
         current_file_path = Path(__file__).resolve().parent
         project_root = find_project_root(current_file_path)
 
-        self.writer = tf.summary.create_file_writer(logdir=f"{project_root}/out/logs/")
+        self.writer = tf.summary.create_file_writer(
+            logdir=f"{project_root}/out/tensorboard/"
+        )
         self.replay_buffer = deque(maxlen=self.buffer_size)
 
         self.step = 0

@@ -34,7 +34,9 @@ class DeepQLearning:
         current_file_path = Path(__file__).resolve().parent
         project_root = find_project_root(current_file_path)
 
-        self.writer = tf.summary.create_file_writer(logdir=f"{project_root}/out/logs/")
+        self.writer = tf.summary.create_file_writer(
+            logdir=f"{project_root}/out/tensorboard/"
+        )
         self.replay_buffer = deque(maxlen=self.buffer_size)
 
         self.online_model = self.create_model()
@@ -77,7 +79,7 @@ class DeepQLearning:
         if random_number < self.epsilon:
             return np.random.choice([0, 1])
         else:
-            q_values = self.online_model.predict([state], verbose=0)  # type: ignore
+            q_values = self.online_model.predict(np.array([state]), verbose=0)
             return np.argmax(q_values[0])
 
     def sample_batches(self):
