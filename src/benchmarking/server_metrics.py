@@ -11,7 +11,7 @@ from datetime import datetime
 
 def get_average_cpu_temperature():
     """
-    Retrieves the average CPU temperature over cores, specifically for Unix based systems.
+    Retrieves the average CPU temperature over no. cores, specifically for Unix based systems.
 
     Returns:
         Average CPU temperature
@@ -25,6 +25,12 @@ def get_average_cpu_temperature():
 
 
 def get_cpu_power_consumption_one_shot():
+    """
+    Retrieves the CPU power consumption in watts using the turbostat command.
+
+    Returns:
+        float: The CPU power consumption in watts, or None if an error occurs.
+    """
     try:
         result = subprocess.run(
             [
@@ -52,6 +58,24 @@ def get_cpu_power_consumption_one_shot():
 
 
 def get_metrics(process, nvml_handle):
+    """
+    Get various metrics related to the server's performance.
+
+    Args:
+        process: A process object representing the server process.
+        nvml_handle: A handle to the NVML library.
+
+    Returns:
+        A dictionary containing the following metrics:
+        - "Time": The current time in the format HH:MM:SS.
+        - "CPU Util": The CPU utilization percentage of the server process.
+        - "GPU Util": The GPU utilization percentage of the server process.
+        - "MEM Util": The memory utilization percentage of the server process.
+        - "CPU Temp": The average CPU temperature.
+        - "GPU Temp": The GPU temperature.
+        - "CPU Power Consumption": The CPU power consumption in watts.
+        - "GPU Power Consumption": The GPU power consumption in watts.
+    """
     return {
         "Time": datetime.now().strftime("%H:%M:%S"),
         "CPU Util": process.cpu_percent(interval=1.0),
@@ -68,6 +92,17 @@ def get_metrics(process, nvml_handle):
 
 
 def measure(target_pid, training_type):
+    """
+    Measure server metrics for a given process ID and training type.
+
+    Args:
+        target_pid (int): The process ID of the target process.
+        training_type (str): The type of training being performed.
+
+    Returns:
+        None
+    """
+
     filename = f"/out/server_measurements/server-metrics-{training_type}_{datetime.now().strftime('%Y-%m-%d@%H-%M-%S')}.csv"
     process = psutil.Process(target_pid)
 
