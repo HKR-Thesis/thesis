@@ -7,7 +7,14 @@ from src.util import get_metrics_path, run_process, monitor_subprocess
 def measure(training_type):
     benchmark_path = get_metrics_path()
 
-    training_command = [sys.executable, "-u", "-m", "src.training.main", "--train", training_type]
+    training_command = [
+        sys.executable,
+        "-u",
+        "-m",
+        "src.training.main",
+        "--train",
+        training_type,
+    ]
     train_proc = run_process(training_command, "Training")
 
     if benchmark_path is not None:
