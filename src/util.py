@@ -4,11 +4,21 @@ import threading
 import matplotlib.pyplot as plt
 from datetime import datetime
 import platform
+from pathlib import Path
+
 
 benchmark_scripts = {
-    "embedded": "src/benchmarking/jetson_metrics.py",
-    "server": "src/benchmarking/server_metrics.py",
+    "embedded": "src.benchmarking.jetson_metrics",
+    "server": "src.benchmarking.server_metrics",
 }
+
+def find_project_root(current_path: Path):
+    root_marker = ".root"
+    while not (current_path / root_marker).exists():
+        if current_path.parent == current_path:
+            raise FileNotFoundError
+        current_path = current_path.parent
+    return current_path
 
 
 def reward_plot(total_rewards: list[float]):
@@ -60,9 +70,7 @@ def get_metrics_path():
     uname = platform.uname()
     if uname.system == "Linux" and "tegra" in uname.release:  # Jetson
         return benchmark_scripts["embedded"]
-    elif (
-        uname.system == "Windows" or uname.system == "Darwin" or uname.system == "Linux"
-    ) and is_nvidia_gpu():  # Literally anything else with an NVIDIA GPU
+    elif uname.system == "Linux" and is_nvidia_gpu():  # Only other supported devices for benchmarking are Linux devices with NVIDIA GPU
         return benchmark_scripts["server"]
     return None  # Unsupported system for benchmarking
 

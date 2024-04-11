@@ -4,6 +4,8 @@ from collections import deque
 from keras.layers import Dense
 from keras.models import Sequential
 from keras.losses import mean_squared_error
+from pathlib import Path
+from src.util import find_project_root
 from src.training.tensorboard_utils import write_tensorboard_logs
 
 
@@ -27,7 +29,10 @@ class DeepQLearning:
             case _:
                 raise ValueError("Invalid configuration")
 
-        self.writer = tf.summary.create_file_writer(logdir="/out/logs/")
+        current_file_path = Path(__file__).resolve().parent
+        project_root = find_project_root(current_file_path)
+
+        self.writer = tf.summary.create_file_writer(logdir=f"{project_root}/out/logs/")
         self.replay_buffer = deque(maxlen=self.buffer_size)
 
         self.step = 0

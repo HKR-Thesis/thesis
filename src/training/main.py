@@ -39,7 +39,7 @@ def train():
         if rewards:
             reward_plot(rewards)
     except Exception as e:
-        print(f"Something went wrong here: {e.with_traceback}")
+        print(f"Something went wrong here: {e}")
 
 
 if __name__ == "__main__":

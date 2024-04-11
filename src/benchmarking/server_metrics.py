@@ -1,4 +1,5 @@
 import sys
+import os
 import pynvml
 import psutil
 import csv
@@ -6,7 +7,9 @@ import subprocess
 import time
 import re
 from src.benchmarking.plot import fieldnames
+from src.util import find_project_root
 from datetime import datetime
+from pathlib import Path
 
 
 def get_average_cpu_temperature():
@@ -52,11 +55,9 @@ def get_cpu_power_consumption_one_shot():
         pkg_watt_match_out = re.search(r"PkgWatt", output)
         pkg_watt_match_err = re.search(r"PkgWatt", error)
         if pkg_watt_match_out:
-            print(f"Output: {pkg_watt_match_out}")
             pkg_watt = float(output.split()[3])
             return pkg_watt
         elif pkg_watt_match_err:
-            print(f"Error: {pkg_watt_match_err}")
             pkg_watt = float(error.split()[3])
             return pkg_watt
     except Exception as e:
@@ -109,8 +110,10 @@ def measure(target_pid, training_type):
     Returns:
         None
     """
+    current_file_path = Path(__file__).resolve().parent
+    project_root = find_project_root(current_file_path)
 
-    filename = f"/out/server_measurements/server-metrics-{training_type}_{datetime.now().strftime('%Y-%m-%d@%H-%M-%S')}.csv"
+    filename = f"{project_root}/out/metrics/server-metrics-{training_type}_{datetime.now().strftime('%Y-%m-%d@%H-%M-%S')}.csv"
     process = psutil.Process(target_pid)
 
     pynvml.nvmlInit()

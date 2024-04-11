@@ -10,9 +10,11 @@ def measure(training_type):
     train_proc = run_process(training_command, "Training")
 
     if benchmark_path is not None:
+        print(sys.executable)
         benchmark_command = [
             sys.executable,
             "-u",
+            "-m",
             benchmark_path,
             str(train_proc.pid),
             training_type,
