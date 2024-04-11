@@ -38,6 +38,6 @@ def simulate_episodes(num_ep: int):
 
         total_rewards.append(np.sum(rewards_ep))
 
-    deep_Q_Learning.online_network.summary()
-    deep_Q_Learning.online_network.save("trained_model-dqt.h5")
+    deep_Q_Learning.online_model.summary()
+    deep_Q_Learning.online_model.save("trained_model-dqt.h5")
     return total_rewards

@@ -1,9 +1,10 @@
 import numpy as np
+import tensorflow as tf
 from collections import deque
 from keras.layers import Dense
 from keras.models import Sequential
 from keras.losses import mean_squared_error
-import tensorflow as tf
+from src.training.tensorboard_utils import write_tensorboard_logs
 
 
 class DeepQLearning:
@@ -26,17 +27,21 @@ class DeepQLearning:
             case _:
                 raise ValueError("Invalid configuration")
 
+        self.writer = tf.summary.create_file_writer(logdir="/out/logs/")
         self.replay_buffer = deque(maxlen=self.buffer_size)
 
-        self.online_network = self.create_network()
+        self.step = 0
+        self.online_model = self.create_model()
         self.actions = np.array([])
 
-    def create_network(self):
+    def create_model(self):
         model = Sequential(
             [
-                Dense(128, input_dim=self.state_dimension, activation="elu"),
-                Dense(64, activation="elu"),
-                Dense(self.action_dimension, activation="linear"),
+                # Dense(128, input_dim=self.state_dimension, activation="elu"),
+                # Dense(64, activation="elu"),
+                Dense(
+                    self.action_dimension, activation="linear"
+                ),  # Solely try a linear approximation
             ]
         )
         model.compile(
@@ -65,7 +70,7 @@ class DeepQLearning:
         if random_number < self.epsilon:
             return np.random.choice([0, 1])
         else:
-            q_values = self.online_network.predict([state], verbose=0)  # type: ignore
+            q_values = self.online_model.predict([state], verbose=0)  # type: ignore
             return np.argmax(q_values[0])
 
     def sample_batches(self):
@@ -83,31 +88,45 @@ class DeepQLearning:
         return random_sample_batch, current_batch
 
     def train_network(self):
-        if len(self.replay_buffer) <= self.batch_size:
-            return
+        with self.writer.as_default():
 
-        random_sample_batch, current_batch = self.sample_batches()
+            if len(self.replay_buffer) <= self.batch_size:
+                return
 
-        on_curr_state = self.online_network.predict(current_batch, verbose=0)  # type: ignore
+            random_sample_batch, current_batch = self.sample_batches()
 
-        input_network = current_batch
-        output_network = np.zeros(shape=(self.batch_size, 2))
-        self.actions = np.zeros(shape=(self.batch_size, 1))
+            on_curr_state = self.online_model.predict(current_batch, verbose=0)  # type: ignore
 
-        for index, (_, action, reward, _, terminated) in enumerate(random_sample_batch):
-            if terminated:
-                reward_with_error = reward
-            else:
-                reward_with_error = reward + self.gamma * np.max(on_curr_state[index])
-            self.actions[index] = action
+            input_network = current_batch
+            output_network = np.zeros(shape=(self.batch_size, 2))
+            self.actions = np.zeros(shape=(self.batch_size, 1))
 
-            output_network[index] = on_curr_state[index]
-            output_network[index, action] = reward_with_error
+            for index, (_, action, reward, _, terminated) in enumerate(
+                random_sample_batch
+            ):
+                if terminated:
+                    reward_with_error = reward
+                else:
+                    reward_with_error = reward + self.gamma * np.max(
+                        on_curr_state[index]
+                    )
+                self.actions[index] = action
 
-        self.online_network.fit(
-            input_network,
-            output_network,
-            batch_size=self.batch_size,
-            epochs=100,
-            verbose=0,  # type: ignore
-        )
+                output_network[index] = on_curr_state[index]
+                output_network[index, action] = reward_with_error
+
+            self.online_model.fit(
+                input_network,
+                output_network,
+                batch_size=self.batch_size,
+                epochs=8,  # Epochs on each batch
+                verbose=0,  # type: ignore
+            )
+            self.step += 1
+
+            write_tensorboard_logs(
+                writer=self.writer,
+                model=self.online_model,
+                step=self.step,
+                reward=reward_with_error,
+            )

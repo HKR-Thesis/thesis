@@ -8,4 +8,6 @@ jetson.gpio
 tensorflow
 onnx
 panda
+psutil
 jetson-stats
+pynvml
