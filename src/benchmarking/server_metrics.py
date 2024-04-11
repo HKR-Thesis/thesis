@@ -29,7 +29,7 @@ def get_cpu_power_consumption_one_shot():
         result = subprocess.run(
             [
                 "sudo",
-                "turbostat",
+                "turbostat",  # Assumes turbostat is installed on the underlying system
                 "--quiet",
                 "--Summary",
                 "--show",
@@ -68,7 +68,7 @@ def get_metrics(process, nvml_handle):
 
 
 def measure(target_pid, training_type):
-    filename = f"/media/nano/Nano Micro SD/measurements/benchmarks/server-metrics-{training_type}_{datetime.now().strftime('%Y-%m-%d@%H-%M-%S')}.csv"
+    filename = f"/out/server_measurements/server-metrics-{training_type}_{datetime.now().strftime('%Y-%m-%d@%H-%M-%S')}.csv"
     process = psutil.Process(target_pid)
 
     pynvml.nvmlInit()
@@ -78,7 +78,7 @@ def measure(target_pid, training_type):
         writer = csv.DictWriter(file, fieldnames=fieldnames)
         writer.writeheader()
 
-        while p.is_running():
+        while process.is_running():
             metrics = get_metrics(process, nvml_handle)
             writer.writerow(metrics)
             time.sleep(2.5)
