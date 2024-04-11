@@ -12,6 +12,7 @@ benchmark_scripts = {
     "server": "src.benchmarking.server_metrics",
 }
 
+
 def find_project_root(current_path: Path):
     root_marker = ".root"
     while not (current_path / root_marker).exists():
@@ -70,7 +71,9 @@ def get_metrics_path():
     uname = platform.uname()
     if uname.system == "Linux" and "tegra" in uname.release:  # Jetson
         return benchmark_scripts["embedded"]
-    elif uname.system == "Linux" and is_nvidia_gpu():  # Only other supported devices for benchmarking are Linux devices with NVIDIA GPU
+    elif (
+        uname.system == "Linux" and is_nvidia_gpu()
+    ):  # Only other supported devices for benchmarking are Linux devices with NVIDIA GPU
         return benchmark_scripts["server"]
     return None  # Unsupported system for benchmarking
 

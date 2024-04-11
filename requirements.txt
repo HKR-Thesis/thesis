@@ -5,10 +5,10 @@ scipy
 pandas
 numba
 smbus2
-#jetson.gpio
 tensorflow
 onnx
 panda
 psutil
-#jetson-stats
 pynvml
+jetson.gpio
+jetson-stats
