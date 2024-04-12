@@ -31,7 +31,7 @@ function initialize_cuda_with_conda() {
         ANACONDA_VERSION="Anaconda3-2024.02-1-Linux-x86_64"
     elif [[ "$(uname -m)" == "aarch64" ]]; then
         ANACONDA_VERSION="Anaconda3-2024.02-1-Linux-aarch64"
-    elsee
+    else
         echo "Unsupported CPU architecture"
         exit 1
     fi
