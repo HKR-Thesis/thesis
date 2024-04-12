@@ -27,8 +27,18 @@ function initialize_python_env() {
 function initialize_cuda_with_conda() {
     echo "Initializing CUDA with conda .."
 
-    wget https://repo.anaconda.com/archive/Anaconda3-latest-Linux-x86_64.sh
-    bash Anaconda3-latest-Linux-x86_64.sh
+    if [[ "$(uname -m)" == "x86_64" ]]; then
+        ANACONDA_VERSION="Anaconda3-2024.02-1-Linux-x86_64"
+    elif [[ "$(uname -m)" == "aarch64" ]]; then
+        ANACONDA_VERSION="Anaconda3-2024.02-1-Linux-aarch64"
+    elsee
+        echo "Unsupported CPU architecture"
+        exit 1
+    fi
+
+    wget https://repo.anaconda.com/archive/$ANACONDA_VERSION.sh
+
+    bash $ANACONDA_VERSION.sh
     local shell="$SHELL"
 
     if [[ $shell == "/bin/bash" ]]; then
