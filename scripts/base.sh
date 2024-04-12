@@ -59,3 +59,10 @@ fi
 if [ ! -d "out/" ]; then
     make_directories;
 fi
+
+if [[ "$(uname -s)" == "Linux" && -f "/etc/lsb-release" ]]; then
+    source /etc/lsb-release
+    if [[ "$DISTRIB_ID" == "Ubuntu" ]]; then
+        initialize_cuda_with_conda;
+    fi
+fi
