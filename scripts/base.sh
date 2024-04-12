@@ -3,6 +3,7 @@
 
 VENV=".venv"
 REQUIREMENTS="requirements.txt"
+CONDA_ENV="thesis-project"
 
 function make_directories() {
     echo "Creating directories .."
@@ -28,24 +29,28 @@ function initialize_cuda_with_conda() {
 
     wget https://repo.anaconda.com/archive/Anaconda3-latest-Linux-x86_64.sh
     bash Anaconda3-latest-Linux-x86_64.sh
-
     local shell="$SHELL"
+
     if [[ $shell == "/bin/bash" ]]; then
         echo "Initializing conda for bash"
-        conda init bash
+        conda init bash || { echo "Error initializing conda for bash"; exit 1; }
     elif [[ $shell == "/bin/zsh" ]]; then
         echo "Initializing conda for zsh"
-        conda init zsh
+        conda init zsh || { echo "Error initializing conda for zsh"; exit 1; }
     else
         echo "Shell not supported"
         exit 1
     fi
 
-    conda create -n thesis-project python=3.11
-    conda activate thesis-project
-
-    conda install -c nvcc cudatoolkit
+    conda create -n $CONDA_ENV python=3.11;
+    conda activate $CONDA_ENV;
+    conda install -c nvcc cudatoolkit;
 }
+
+if [ ! -f "$REQUIREMENTS" ]; then
+    echo "requirements.txt not found: Please create a requirements.txt file with the necessary packages."
+    exit 1
+fi
 
 if [ ! -d "$VENV" ]; then
     initialize_python_env;
