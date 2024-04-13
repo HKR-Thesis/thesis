@@ -6,7 +6,7 @@ CUDA_VERSION="11.0"
 CONDA_ENV="cuda-enabled"
 
 function install_conda_deps() {
-    ./scripts/install-cuda.sh
+    ./scripts/cuda.sh
     sudo apt install libgl1-mesa-glx libegl1-mesa libxrandr2 libxrandr2 libxss1 libxcursor1 libxcomposite1 libasound2 libxi6 libxtst6 -y > /dev/null 2>&1
 }
 

@@ -31,11 +31,11 @@ if [ ! -d "$OUTPUT_DIR" ]; then
 fi
 
 if ! is_jetson; then
-    ./scripts/install-conda.sh
+    ./scripts/conda.sh
 else
     echo "This is a Jetson device. Skipping all Conda-related setup."
 fi
 
 if [ ! -d "$VENV" ]; then
-    ./scripts/install-venv.sh
+    ./scripts/venv.sh
 fi
