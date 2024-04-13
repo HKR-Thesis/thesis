@@ -9,3 +9,4 @@ trained_model*
 execution_results*
 *.deb
 out/
+Miniconda3*.sh
