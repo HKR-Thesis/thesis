@@ -5,6 +5,15 @@ VENV=".venv"
 REQUIREMENTS="requirements.txt"
 CONDA_ENV="thesis-project"
 
+function install_venv_deps() {
+    echo "Installing distro deps .."
+    sudo apt install python3-venv -y > /dev/null 2>&1
+}
+
+function install_conda_deps() {
+    sudo apt install libgl1-mesa-glx libegl1-mesa libxrandr2 libxrandr2 libxss1 libxcursor1 libxcomposite1 libasound2 libxi6 libxtst6 -y > /dev/null 2>&1
+}
+
 function make_directories() {
     echo "Creating directories .."
     mkdir -p out/
@@ -13,7 +22,7 @@ function make_directories() {
 
 function initialize_python_env() {
     echo "Initializing python virtual environment .."
-    python3 -m venv .venv
+    python3 -m venv $VENV
     source $VENV/bin/activate
     pip install --upgrade pip > /dev/null 2>&1
     while read requirement; do
@@ -27,19 +36,23 @@ function initialize_python_env() {
 function initialize_cuda_with_conda() {
     echo "Initializing CUDA with conda .."
 
+    install_conda_deps;
+
     if [[ "$(uname -m)" == "x86_64" ]]; then
-        ANACONDA_VERSION="Anaconda3-2024.02-1-Linux-x86_64"
+        ARCHITECTURE="x86_64"
     elif [[ "$(uname -m)" == "aarch64" ]]; then
-        ANACONDA_VERSION="Anaconda3-2024.02-1-Linux-aarch64"
+        ARCHITECTURE="aarch64"
     else
         echo "Unsupported CPU architecture"
         exit 1
     fi
 
-    wget https://repo.anaconda.com/archive/$ANACONDA_VERSION.sh
+    wget http://repo.continuum.io/miniconda/Miniconda3-py39_4.9.2-Linux-$ARCHITECTURE.sh
 
-    bash $ANACONDA_VERSION.sh
+    bash Miniconda3-py39_4.9.2-Linux-$ARCHITECTURE.sh -b
     local shell="$SHELL"
+
+    export PATH="/home/$(whoami)/miniconda3/bin:$PATH"
 
     if [[ $shell == "/bin/bash" ]]; then
         echo "Initializing conda for bash"
@@ -51,10 +64,20 @@ function initialize_cuda_with_conda() {
         echo "Shell not supported"
         exit 1
     fi
+    
+    if [[ $shell == "/bin/bash" ]]; then
+	source $HOME/.bashrc;
+    elif [[ $shell == "/bin/zsh" ]]; then
+	source $HOME/.zshrc;
+    else
+	echo "Shell not supported .."
+	exit 1
+    fi
 
+    # Create conda env and install cuda stuff
     conda create -n $CONDA_ENV python=3.11;
     conda activate $CONDA_ENV;
-    conda install -c nvcc cudatoolkit;
+    conda install cuda cudatoolkit -c nvidia;
 }
 
 if [ ! -f "$REQUIREMENTS" ]; then
@@ -63,6 +86,7 @@ if [ ! -f "$REQUIREMENTS" ]; then
 fi
 
 if [ ! -d "$VENV" ]; then
+    install_venv_deps;
     initialize_python_env;
 fi
 
