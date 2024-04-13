@@ -4,10 +4,10 @@ scipy
 pandas
 numba
 smbus2
-tensorflow
+tensorflow[and-cuda]
 onnx
-panda
 psutil
 pynvml
 jetson.gpio
 jetson-stats
+matplotlib

@@ -1,4 +1,4 @@
-#! /bin/bash/
+#! /bin/bash
 # adisve - 12-04-2024
 
 declare -a arr=("classic" "numba" "dql" "dql-target")
