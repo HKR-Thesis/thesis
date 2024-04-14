@@ -9,5 +9,5 @@ onnx
 psutil
 pynvml
 jetson.gpio
-jetson-stats
+#jetson-stats
 matplotlib

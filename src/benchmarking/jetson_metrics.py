@@ -4,6 +4,8 @@ import argparse
 from datetime import datetime
 from src.benchmarking.plot import fieldnames
 from jtop import jtop
+from pathlib import Path
+from src.util import find_project_root
 
 
 def get_metrics(jetson) -> dict:
@@ -27,15 +29,13 @@ def get_metrics(jetson) -> dict:
     return {
         "Time": datetime.now().strftime("%H:%M:%S"),
         "CPU Util": jetson.cpu["total"]["user"],
-        "GPU Util": jetson.gpu["load"],
+        "GPU Util": jetson.gpu["gpu"]["status"]["load"],
         "MEM Util": jetson.memory["RAM"]["used"] / jetson.memory["RAM"]["tot"],
         "CPU Temp": jetson.temperature["CPU"]["temp"],
         "GPU Temp": jetson.temperature["GPU"]["temp"],
-        "CPU Power Consumption": jetson.power["rail"]["POM_5V_CPU"]["volt"]
-        * jetson.power["rail"]["POM_5V_CPU"]["curr"],  # watts!
-        "GPU Power Consumption": jetson.power["POM_5V_GPU"][
-            "power"
-        ],  # GPU power in mW or W (not entirely sure yet)
+        "CPU Power Consumption": (jetson.power["rail"]["POM_5V_CPU"]["volt"]
+        * jetson.power["rail"]["POM_5V_CPU"]["curr"]),  # watts!
+        "GPU Power Consumption": (jetson.power["rail"]["POM_5V_GPU"]["volt"] * jetson.power["rail"]["POM_5V_GPU"]["curr"]),  # GPU power in mW or W (not entirely sure yet)
     }
 
 
@@ -50,7 +50,11 @@ def measure(target_pid, training_type):
     Returns:
         None
     """
-    filename = f"/media/nano/Nano Micro SD/measurements/benchmarks/metrics-{training_type}_{datetime.now().strftime('%Y-%m-%d@%H-%M-%S')}.csv"
+    current_file_path = Path(__file__).resolve().parent
+    project_root = find_project_root(current_file_path)
+
+    filename = f"{project_root}/out/metrics/jetson-metrics-{training_type}_{datetime.now().strftime('%Y-%m-%d@%H-%M-%S')}.csv"
+    
     with jtop() as jetson:
         with open(filename, mode="w", newline="") as file:
             writer = csv.DictWriter(file, fieldnames=fieldnames)
