@@ -34,7 +34,7 @@ def train(training_type):
         np.random.seed(42)
         random.seed(42)
         tf.random.set_seed(42)
-        print(f"Attempting training for {training_type}")
+        print(f"Training for --> {training_type}")
         rewards = None
         if training_type == "classic":
             _, rewards = classic_sim(15000)
@@ -45,8 +45,8 @@ def train(training_type):
         elif training_type == "dql":
             rewards = dql_sim(1000)
 
-        if rewards:
-            reward_plot(rewards)
+        # if rewards:
+        #    reward_plot(rewards)
     except Exception as e:
         print(f"Something went wrong here: {e}")
 

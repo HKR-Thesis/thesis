@@ -18,7 +18,7 @@ function is_jetson() {
 function make_directories() {
     echo "Creating directories .."
     mkdir -p $OUTPUT_DIR
-    mkdir -p $OUTPUT_DIR/{tensorboard,metrics,plots,server_measurements,tmp_model}
+    mkdir -p $OUTPUT_DIR/{tensorboard,metrics,plots,server_measurements,tmp_model,figures}
 }
 
 if [ ! -f "$REQUIREMENTS" ]; then
