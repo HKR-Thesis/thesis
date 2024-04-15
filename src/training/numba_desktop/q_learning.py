@@ -1,6 +1,7 @@
 import numpy as np
 from numba import njit
 from typing import Tuple, List
+from src.training.numba_desktop.util import custom_digitize
 
 
 class QLearning:
@@ -34,14 +35,6 @@ class QLearning:
 
     @staticmethod
     @njit
-    def custom_digitize(value, bins):
-        for i in range(len(bins)):
-            if value < bins[i]:
-                return i
-        return len(bins)
-
-    @staticmethod
-    @njit
     def discretize_state(simulator_state, low_bounds, up_bounds, bins):
         angle_theta, angular_velocity_theta_dot, cart_position, cart_velocity = (
             simulator_state
@@ -52,19 +45,12 @@ class QLearning:
         cart_position_bins = np.linspace(low_bounds[2], up_bounds[2], bins[2] + 1)
         cart_velocity_bins = np.linspace(low_bounds[3], up_bounds[3], bins[3] + 1)
 
-        theta_index = QLearning.custom_digitize(angle_theta, theta_bins) - 1
+        theta_index = custom_digitize(angle_theta, theta_bins) - 1
         theta_dot_index = (
-            QLearning.custom_digitize(
-                np.abs(angular_velocity_theta_dot), theta_dot_bins
-            )
-            - 1
+            custom_digitize(np.abs(angular_velocity_theta_dot), theta_dot_bins) - 1
         )
-        cart_position_index = (
-            QLearning.custom_digitize(cart_position, cart_position_bins) - 1
-        )
-        cart_velocity_index = (
-            QLearning.custom_digitize(cart_velocity, cart_velocity_bins) - 1
-        )
+        cart_position_index = custom_digitize(cart_position, cart_position_bins) - 1
+        cart_velocity_index = custom_digitize(cart_velocity, cart_velocity_bins) - 1
 
         return (theta_index, theta_dot_index, cart_position_index, cart_velocity_index)
 
