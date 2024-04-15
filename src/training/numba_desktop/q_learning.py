@@ -31,55 +31,36 @@ class QLearning:
             ),
         )
 
-    @staticmethod
-    @njit(fastmath=True)
-    def discretize_state(
-        simulator_state: np.ndarray,
-        low_bounds: np.ndarray,
-        up_bounds: np.ndarray,
-        bins: np.ndarray,
-    ) -> tuple[np.float64, np.float64, np.float64, np.float64]:
-        (
-            angle_theta,
-            angular_velocity_theta_dot,
-            cart_position,
-            cart_velocity,
-        ) = simulator_state
+    @njit
+    def custom_digitize(self, value, bins):
+        for i in range(len(bins)):
+            if value < bins[i]:
+                return i
+        return len(bins)
 
-        theta_bins = np.linspace(
-            low_bounds[0],
-            up_bounds[0],
-            bins[0],
-        )
-        theta_dot_bins = np.linspace(
-            low_bounds[1],
-            up_bounds[1],
-            bins[1],
-        )
-        cart_position_bins = np.linspace(
-            low_bounds[2],
-            up_bounds[2],
-            bins[2],
-        )
-        cart_velocity_bins = np.linspace(
-            low_bounds[3],
-            up_bounds[3],
-            bins[3],
+    @njit
+    def discretize_state(self, simulator_state, low_bounds, up_bounds, bins):
+        angle_theta, angular_velocity_theta_dot, cart_position, cart_velocity = (
+            simulator_state
         )
 
-        theta_index = np.digitize(angle_theta, theta_bins)
-        theta_dot_index = np.digitize(
-            np.abs(angular_velocity_theta_dot), theta_dot_bins
-        )
-        cart_position_index = np.digitize(cart_position, cart_position_bins)
-        cart_velocity_index = np.digitize(cart_velocity, cart_velocity_bins)
+        theta_bins = np.linspace(low_bounds[0], up_bounds[0], bins[0] + 1)
+        theta_dot_bins = np.linspace(low_bounds[1], up_bounds[1], bins[1] + 1)
+        cart_position_bins = np.linspace(low_bounds[2], up_bounds[2], bins[2] + 1)
+        cart_velocity_bins = np.linspace(low_bounds[3], up_bounds[3], bins[3] + 1)
 
-        return (
-            np.subtract(theta_index, 1),
-            np.subtract(theta_dot_index, 1),
-            np.subtract(cart_position_index, 1),
-            np.subtract(cart_velocity_index, 1),
+        theta_index = self.custom_digitize(angle_theta, theta_bins) - 1
+        theta_dot_index = (
+            self.custom_digitize(np.abs(angular_velocity_theta_dot), theta_dot_bins) - 1
         )
+        cart_position_index = (
+            self.custom_digitize(cart_position, cart_position_bins) - 1
+        )
+        cart_velocity_index = (
+            self.custom_digitize(cart_velocity, cart_velocity_bins) - 1
+        )
+
+        return (theta_index, theta_dot_index, cart_position_index, cart_velocity_index)
 
     def select_action(
         self, state: tuple[np.intp, np.intp, np.intp, np.intp], episode_index: int
