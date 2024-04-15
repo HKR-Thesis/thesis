@@ -21,9 +21,18 @@ The project provides several setup scripts under scripts/ to install the necessa
 - The default Jetpack version is 4.6.1, but might have to be installed manually with ```sudo apt install -y nvidia-jetpack```
 - The default python version is 3.6
 
+> [!WARNING] 
+> In order for this project to properly run benchmarking tests, the Jetson Nano must be in MAX-N mode and have the python tool [jetson-stats](https://github.com/rbonghi/jetson_stats) installed. One can set the Jetson Nano to MAX-N mode by using the command ```jtop``` and selecting the option to set the Jetson Nano to MAX-N mode, which is installed along jetson-stats.
+
+#### How to install jetson-stats
+
+```bash
+sudo -H python -m pip install -U jetson-stats
+```
+
 ### Docker Version
 
-The project can be run on the OKDO Nano C100 using Docker. The Dockerfile is located under the ``l4t-tensorflow-container``` directory of the project. The following commands can be used to build the docker image:
+The project can be run on the OKDO Nano C100 using Docker. The Dockerfile is located under the ```l4t-tensorflow-container``` directory of the project. The following commands can be used to build the docker image:
 
 ```bash
 sudo apt install docker-compose
@@ -42,7 +51,7 @@ The docker image will be built and the container will be started. The project ca
 ### Bare Metal Installation of Tensorflow with CUDA support on OKDO Nano C100
 
 > [!IMPORTANT] 
-> A common issue that occurs when instsalling tensorflow is ```fatal error: xlocale.h: No such file or directory```. This can be fixed by creating the symlink ```sudo ln -s /usr/include/locale.h /usr/include/xlocale.h```
+> A common issue that occurs when installing tensorflow is ```fatal error: xlocale.h: No such file or directory```. This can be fixed by creating the symlink ```sudo ln -s /usr/include/locale.h /usr/include/xlocale.h```
 
 The Python version that should be used is 3.6, and the tensorflow version that should be used on the [OKDO Nano](https://www.okdo.com/p/okdo-nano-c100-developer-kit-powered-by-nvidia-jetson-nano-module/) is tensorflow-2.7.0+nv22. The [official installation procedure](https://forums.developer.nvidia.com/t/official-tensorflow-for-jetson-nano/71770) is as follows:
 
