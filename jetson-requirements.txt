@@ -1,5 +1,6 @@
 ipywidgets
 scipy
+numba
 tensorboard
 pandas
 smbus2
