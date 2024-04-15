@@ -1,6 +1,6 @@
-version: '3.8'
+version: '3.3'
 services:
-  my_tensorflow_container:
+  l4t-tensorflow-cuda:
     build:
       context: .
       dockerfile: Dockerfile
