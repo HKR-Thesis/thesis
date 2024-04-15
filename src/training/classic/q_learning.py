@@ -2,9 +2,18 @@ import numpy as np
 from src.inverted_pendulum_simulator.src.inverted_pendulum import InvertedPendulum
 from typing import Tuple, Dict, Any
 
+
 class QLearning:
     def __init__(self, config: Dict[str, Any]) -> None:
-        required_keys = ["alpha", "gamma", "epsilon", "bins", "low_bounds", "up_bounds", "actions"]
+        required_keys = [
+            "alpha",
+            "gamma",
+            "epsilon",
+            "bins",
+            "low_bounds",
+            "up_bounds",
+            "actions",
+        ]
         if all(key in config for key in required_keys):
             self.alpha = config["alpha"]
             self.gamma = config["gamma"]
@@ -31,7 +40,9 @@ class QLearning:
     def discretize_state(
         self, simulator: InvertedPendulum
     ) -> Tuple[int, int, int, int]:
-        angle_theta, angular_velocity_theta_dot, cart_position, cart_velocity = simulator.state
+        angle_theta, angular_velocity_theta_dot, cart_position, cart_velocity = (
+            simulator.state
+        )
 
         theta_bins = np.linspace(
             self.low_bounds["theta"],
@@ -55,7 +66,9 @@ class QLearning:
         )
 
         theta_index = np.digitize(angle_theta, theta_bins)
-        theta_dot_index = np.digitize(np.abs(angular_velocity_theta_dot), theta_dot_bins)
+        theta_dot_index = np.digitize(
+            np.abs(angular_velocity_theta_dot), theta_dot_bins
+        )
         cart_position_index = np.digitize(cart_position, cart_position_bins)
         cart_velocity_index = np.digitize(cart_velocity, cart_velocity_bins)
 
@@ -72,11 +85,11 @@ class QLearning:
         if episode_index > 7000:
             self.epsilon *= 0.999
         if episode_index < 5000:
-            return np.random.choice(self.actions)
+            return np.random.choice([0, 1])
 
         random_number = np.random.random()
         if random_number < self.epsilon:
-            return np.random.choice(self.actions)
+            return np.random.choice([0, 1])
         else:
             return np.argmax(self.q_table[state])
 
