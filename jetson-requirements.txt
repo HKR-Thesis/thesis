@@ -2,7 +2,6 @@ ipywidgets
 scipy
 numba==0.50.1
 keras==2.6
-tensorboard
 pandas
 smbus2
 psutil
