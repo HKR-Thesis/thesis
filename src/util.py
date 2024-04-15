@@ -99,7 +99,11 @@ def run_process(command, output_prefix):
     - process: The subprocess.Popen object for further manipulation or inspection.
     """
     process = subprocess.Popen(
-        command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=1
+        command,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        bufsize=1,
+        universal_newlines=True,
     )
 
     output_thread = threading.Thread(
