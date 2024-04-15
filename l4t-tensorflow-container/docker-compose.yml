@@ -1,0 +1,13 @@
+version: '3.3'
+services:
+  l4t-tensorflow-cuda:
+    build:
+      context: ../
+      dockerfile: l4t-tensorflow-container/Dockerfile
+    ports:
+      - "80:80"
+    volumes:
+      - ..:/app
+      - /run/jtop.sock:/run/jtop.sock   # For jetson-stats (jtop) to work in docker containers
+    stdin_open: true
+    tty: true
