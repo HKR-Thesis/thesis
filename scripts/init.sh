@@ -4,7 +4,6 @@
 
 OUTPUT_DIR="out"
 VENV=".venv"
-REQUIREMENTS="requirements.txt"
 
 
 function is_jetson() {
@@ -21,11 +20,6 @@ function make_directories() {
     mkdir -p $OUTPUT_DIR/{tensorboard,metrics,plots,server_measurements,tmp_model,figures}
 }
 
-if [ ! -f "$REQUIREMENTS" ]; then
-    echo "requirements.txt not found: Please create a requirements.txt file with the necessary packages."
-    exit 1
-fi
-
 if [ ! -d "$OUTPUT_DIR" ]; then
     make_directories;
 fi
@@ -37,5 +31,9 @@ else
 fi
 
 if [ ! -d "$VENV" ]; then
-    ./scripts/venv.sh
+    if is_jetson; then
+        ./scripts/venv.sh "jetson-requirements.txt"
+    else
+        ./scripts/venv.sh "server-requirements.txt"
+    fi
 fi

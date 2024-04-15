@@ -1,9 +1,8 @@
 #! /bin/bash
 # adisve 14-04-2024
 
-REQUIREMENTS="requirements.txt"
+REQUIREMENTS_FILE=$1
 VENV=".venv"
-
 
 function install_venv_deps() {
     echo "Installing distro deps .."
@@ -18,7 +17,7 @@ function initialize_python_venv() {
     while read requirement; do
         echo "Installing $requirement .."
         pip install "$requirement" > pip_logs.txt 2>&1
-    done < $REQUIREMENTS;
+    done < $REQUIREMENTS_FILE;
 }
 
 install_venv_deps;

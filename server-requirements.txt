@@ -7,7 +7,6 @@ smbus2
 tensorflow[and-cuda]
 onnx
 psutil
+tensorboard
 pynvml
-jetson.gpio
-#jetson-stats
 matplotlib
