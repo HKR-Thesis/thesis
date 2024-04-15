@@ -3,7 +3,6 @@ scipy
 tensorboard
 pandas
 smbus2
-onnx
 psutil
 jetson.gpio
 matplotlib
