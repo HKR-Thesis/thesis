@@ -1,6 +1,7 @@
 ipywidgets
 scipy
 numba
+keras==2.6
 tensorboard
 pandas
 smbus2
