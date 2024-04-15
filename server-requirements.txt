@@ -1,0 +1,12 @@
+numpy
+ipywidgets
+scipy
+pandas
+numba
+smbus2
+tensorflow[and-cuda]
+onnx
+psutil
+tensorboard
+pynvml
+matplotlib

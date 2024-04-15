@@ -1,9 +1,11 @@
 import pandas as pd
+import sys
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 from datetime import datetime
-import sys
 from scipy.signal import savgol_filter
+from pathlib import Path
+from src.util import find_project_root
 
 fieldnames = [
     "Time",
@@ -12,26 +14,16 @@ fieldnames = [
     "MEM Util",
     "CPU Temp",
     "GPU Temp",
-    "CPU Voltage",
-    "CPU Current",
-    "GPU Voltage",
-    "GPU Current",
-    "Total Voltage",
-    "Total Current",
-    "Average Power Consumption",
+    "CPU Power Consumption",
+    "GPU Power Consumption",
 ]
 
 metric_groups = {
     "util": ["CPU Util", "GPU Util", "MEM Util"],
     "temp": ["CPU Temp", "GPU Temp"],
     "pwr_con": [
-        "CPU Voltage",
-        "CPU Current",
-        "GPU Voltage",
-        "GPU Current",
-        "Total Voltage",
-        "Total Current",
-        "Average Power Consumption",
+        "CPU Power Consumption",
+        "GPU Power Consumption",
     ],
 }
 
@@ -58,7 +50,7 @@ def plot(csv_path):
                 benchmark_data["Time"],
                 (
                     benchmark_data[f"{value} Smooth"] / 1000
-                    if metric is "pwr_con"
+                    if metric == "pwr_con"
                     else benchmark_data[f"{value} Smooth"]
                 ),
                 label=value,
@@ -74,7 +66,12 @@ def plot(csv_path):
         ax.xaxis.set_major_locator(mdates.AutoDateLocator())
         plt.setp(ax.xaxis.get_majorticklabels(), rotation=45, ha="right")
 
-    plt.savefig(f"../../out/plots/{datetime.now().strftime('%Y-%m-%d@%H:%M:%S')}")
+    current_file_path = Path(__file__).resolve().parent
+    project_root = find_project_root(current_file_path)
+
+    plt.savefig(
+        f"{project_root}/out/plots/{datetime.now().strftime('%Y-%m-%d@%H:%M:%S')}"
+    )
 
 
 if __name__ == "__main__":

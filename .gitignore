@@ -7,3 +7,9 @@ visualizations/
 figures/
 trained_model*
 execution_results*
+*.deb
+out/
+Miniconda3*.sh
+Miniforge3*.sh
+*logs.txt
+*.pyc

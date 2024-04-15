@@ -19,8 +19,6 @@ def simulate_episodes(num_ep: int):
     total_rewards = []
 
     for i in range(num_ep):
-        print(f"Simulating episode {i}")
-
         rewards_ep = []
         current_state = env.reset()
         terminal = False
@@ -34,10 +32,8 @@ def simulate_episodes(num_ep: int):
             deep_Q_Learning.train_network()
             current_state = new_state
 
-        print(f"Sum of rewards {np.sum(rewards_ep)}")
-
         total_rewards.append(np.sum(rewards_ep))
 
-    deep_Q_Learning.online_network.summary()
-    deep_Q_Learning.online_network.save("trained_model-dqt.h5")
+    deep_Q_Learning.online_model.summary()
+    deep_Q_Learning.online_model.save("trained_model-dqt.h5")
     return total_rewards

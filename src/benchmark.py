@@ -1,20 +1,30 @@
 import sys
 import threading
+import argparse
 from src.util import get_metrics_path, run_process, monitor_subprocess
 
 
 def measure(training_type):
     benchmark_path = get_metrics_path()
 
-    training_command = [sys.executable, "-u", "-m", "src.training.main", training_type]
+    training_command = [
+        sys.executable,
+        "-u",
+        "-m",
+        "src.training.main",
+        "--train",
+        training_type,
+    ]
     train_proc = run_process(training_command, "Training")
 
     if benchmark_path is not None:
         benchmark_command = [
             sys.executable,
-            "-u",
-            benchmark_path,
+            "-m",
+            "src.benchmarking.jetson_metrics",
+            "--pid",
             str(train_proc.pid),
+            "--train",
             training_type,
         ]
         benchmark_proc = run_process(benchmark_command, "Benchmark")
@@ -30,8 +40,16 @@ def measure(training_type):
         train_proc.wait()
 
 
+def parse_arguments():
+    parser = argparse.ArgumentParser(
+        description="Run training and optionally benchmark."
+    )
+    parser.add_argument(
+        "--train", type=str, required=True, help="Specify the type of training"
+    )
+    return parser.parse_args()
+
+
 if __name__ == "__main__":
-    if len(sys.argv) >= 2:
-        measure(sys.argv[1])
-    else:
-        print(f"Usage: {sys.executable} benchmark.py <training_type>")
+    args = parse_arguments()
+    measure(args.train)

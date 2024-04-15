@@ -7,7 +7,7 @@ from src.inverted_pendulum_simulator.src.inverted_pendulum_visualizer import (
 import numpy as np
 
 
-def simulate_model(loaded_model, episodes: int) -> None:
+def simulate_model(loaded_model, episodes: int):
     env = InvertedPendulum()
     env.reset()
     visualizer = InvertedPendulumVisualizer(env)
