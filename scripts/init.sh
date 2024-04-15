@@ -3,8 +3,6 @@
 
 
 OUTPUT_DIR="out"
-VENV=".venv"
-
 
 function is_jetson() {
     if [ -f "/etc/nv_tegra_release" ]; then
@@ -17,7 +15,7 @@ function is_jetson() {
 function make_directories() {
     echo "Creating directories .."
     mkdir -p $OUTPUT_DIR
-    mkdir -p $OUTPUT_DIR/{tensorboard,metrics,plots,server_measurements,tmp_model,figures}
+    mkdir -p $OUTPUT_DIR/{metrics,plots,server_measurements,tmp_model,figures}
 }
 
 if [ ! -d "$OUTPUT_DIR" ]; then
@@ -31,9 +29,7 @@ else
 fi
 
 if [ ! -d "$VENV" ]; then
-    if is_jetson; then
-        ./scripts/venv.sh "jetson-requirements.txt"
-    else
+    if ! is_jetson; then
         ./scripts/venv.sh "server-requirements.txt"
     fi
 fi
