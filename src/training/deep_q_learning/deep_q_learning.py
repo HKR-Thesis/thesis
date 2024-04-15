@@ -2,11 +2,8 @@ import tensorflow as tf
 import numpy as np
 from collections import deque
 from keras.layers import Dense
-from pathlib import Path
-from src.util import find_project_root
 from keras.models import Sequential
 from keras.losses import mean_squared_error
-from src.training.tensorboard_utils import write_tensorboard_logs
 
 
 class DeepQLearning:
@@ -31,12 +28,6 @@ class DeepQLearning:
         else:
             raise ValueError("Invalid configuration")
 
-        current_file_path = Path(__file__).resolve().parent
-        project_root = find_project_root(current_file_path)
-
-        self.writer = tf.summary.create_file_writer(
-            logdir=f"{project_root}/out/tensorboard/"
-        )
         self.replay_buffer = deque(maxlen=self.buffer_size)
 
         self.online_model = self.create_model()
@@ -91,49 +82,37 @@ class DeepQLearning:
         return random_sample_batch, current_batch, next_batch
 
     def train_network(self):
-        with self.writer.as_default():
-            if len(self.replay_buffer) <= self.batch_size:
-                return
+        if len(self.replay_buffer) <= self.batch_size:
+            return
 
-            random_sample_batch, current_batch, next_batch = self.sample_batches()
+        random_sample_batch, current_batch, next_batch = self.sample_batches()
 
-            tn_next_state = self.target_model.predict(next_batch, verbose=0)
-            on_current_state = self.online_model.predict(current_batch, verbose=0)
+        tn_next_state = self.target_model.predict(next_batch, verbose=0)
+        on_current_state = self.online_model.predict(current_batch, verbose=0)
 
-            input_network = current_batch
-            output_network = np.zeros(shape=(self.batch_size, 2))
-            self.actions = np.zeros(shape=(self.batch_size, 1))
+        input_network = current_batch
+        output_network = np.zeros(shape=(self.batch_size, 2))
+        self.actions = np.zeros(shape=(self.batch_size, 1))
 
-            for index, (_, action, reward, _, terminated) in enumerate(
-                random_sample_batch
-            ):
-                if terminated:
-                    reward_with_error = reward
-                else:
-                    reward_with_error = reward + self.gamma * np.max(
-                        tn_next_state[index]
-                    )
-                self.actions[index] = action
+        for index, (_, action, reward, _, terminated) in enumerate(random_sample_batch):
+            if terminated:
+                reward_with_error = reward
+            else:
+                reward_with_error = reward + self.gamma * np.max(tn_next_state[index])
+            self.actions[index] = action
 
-                output_network[index] = on_current_state[index]
-                output_network[index, action] = reward_with_error
+            output_network[index] = on_current_state[index]
+            output_network[index, action] = reward_with_error
 
-            self.online_model.fit(
-                input_network,
-                output_network,
-                batch_size=self.batch_size,
-                epochs=8,
-                verbose=0,
-            )
-            self.step += 1
+        self.online_model.fit(
+            input_network,
+            output_network,
+            batch_size=self.batch_size,
+            epochs=8,
+            verbose=0,
+        )
+        self.step += 1
 
-            if self.step > (self.tn_update_period - 1):
-                self.target_model.set_weights(self.online_model.get_weights())
-                self.step = 0
-
-            write_tensorboard_logs(
-                writer=self.writer,
-                model=self.online_model,
-                step=self.step,
-                reward=reward_with_error,
-            )
+        if self.step > (self.tn_update_period - 1):
+            self.target_model.set_weights(self.online_model.get_weights())
+            self.step = 0
