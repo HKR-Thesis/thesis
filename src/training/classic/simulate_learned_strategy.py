@@ -6,7 +6,7 @@ from src.inverted_pendulum_simulator.src.inverted_pendulum_visualizer import (
 from src.training.classic.q_learning import QLearning
 
 
-def simulate_learned_strategy(q_learning: QLearning, episodes: int) -> None:
+def simulate_learned_strategy(q_learning: QLearning, episodes: int):
     env = InvertedPendulum()
     visualizer = InvertedPendulumVisualizer(env)
     states = []

@@ -26,10 +26,17 @@ def parse_arguments():
         required=True,
         help="Specify the type of training to perform.",
     )
+    parser.add_argument(
+        "--with-rewards",
+        choices=["yes", "no"],
+        required=False,
+        default="no",
+        help="Specify if rewards should be plotted after training.",
+    )
     return parser.parse_args()
 
 
-def train(training_type):
+def train(training_type, with_rewards):
     try:
         np.random.seed(42)
         random.seed(42)
@@ -45,12 +52,13 @@ def train(training_type):
         elif training_type == "dql":
             rewards = dql_sim(1000)
 
-        # if rewards:
-        #    reward_plot(rewards)
+        if with_rewards == "yes" and rewards:
+            reward_plot(rewards)
+
     except Exception as e:
         print(f"Something went wrong here: {e}")
 
 
 if __name__ == "__main__":
     args = parse_arguments()
-    train(args.train)
+    train(args.train, args.with_rewards)

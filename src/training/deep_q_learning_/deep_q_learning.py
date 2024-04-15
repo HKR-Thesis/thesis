@@ -11,23 +11,24 @@ from src.training.tensorboard_utils import write_tensorboard_logs
 
 class DeepQLearning:
     def __init__(self, config: dict) -> None:
-        match config:
-            case {
-                "gamma": gamma,
-                "epsilon": epsilon,
-                "state_dimension": state_dimension,
-                "action_dimension": action_dimension,
-                "buffer_size": buffer_size,
-                "batch_size": batch_size,
-            }:
-                self.gamma = gamma
-                self.epsilon = epsilon
-                self.state_dimension = state_dimension
-                self.action_dimension = action_dimension
-                self.buffer_size = buffer_size
-                self.batch_size = batch_size
-            case _:
-                raise ValueError("Invalid configuration")
+        # Validate configuration using a conditional structure
+        required_keys = [
+            "gamma",
+            "epsilon",
+            "state_dimension",
+            "action_dimension",
+            "buffer_size",
+            "batch_size",
+        ]
+        if all(key in config for key in required_keys):
+            self.gamma = config["gamma"]
+            self.epsilon = config["epsilon"]
+            self.state_dimension = config["state_dimension"]
+            self.action_dimension = config["action_dimension"]
+            self.buffer_size = config["buffer_size"]
+            self.batch_size = config["batch_size"]
+        else:
+            raise ValueError("Invalid configuration")
 
         current_file_path = Path(__file__).resolve().parent
         project_root = find_project_root(current_file_path)
@@ -44,18 +45,12 @@ class DeepQLearning:
     def create_model(self):
         model = Sequential(
             [
-                # Dense(128, input_dim=self.state_dimension, activation="elu"),
-                # Dense(64, activation="elu"),
-                Dense(
-                    self.action_dimension, activation="linear"
-                ),  # Solely try a linear approximation
+                Dense(128, input_dim=self.state_dimension, activation="elu"),
+                Dense(64, activation="elu"),
+                Dense(self.action_dimension, activation="linear"),
             ]
         )
-        model.compile(
-            optimizer="rmsprop",
-            loss=self.loss_fn,
-            metrics=["accuracy"],
-        )
+        model.compile(optimizer="rmsprop", loss=self.loss_fn, metrics=["accuracy"])
         return model
 
     def loss_fn(self, true, pred):
@@ -73,22 +68,19 @@ class DeepQLearning:
             return np.random.choice([0, 1])
 
         random_number = np.random.random()
-
         if random_number < self.epsilon:
             return np.random.choice([0, 1])
         else:
-            q_values = self.online_model.predict([state], verbose=0)  # type: ignore
+            q_values = self.online_model.predict(np.array([state]), verbose=0)
             return np.argmax(q_values[0])
 
     def sample_batches(self):
         if len(self.replay_buffer) < self.batch_size:
             raise ValueError("Not enough samples in replay_buffer")
 
-        # Randomly sample indices
         indices = np.random.choice(
             len(self.replay_buffer), self.batch_size, replace=False
         )
-
         random_sample_batch = [self.replay_buffer[i] for i in indices]
         current_batch = np.array([transition[0] for transition in random_sample_batch])
 
@@ -96,16 +88,14 @@ class DeepQLearning:
 
     def train_network(self):
         with self.writer.as_default():
-
             if len(self.replay_buffer) <= self.batch_size:
                 return
 
             random_sample_batch, current_batch = self.sample_batches()
-
-            on_curr_state = self.online_model.predict(current_batch, verbose=0)  # type: ignore
+            on_curr_state = self.online_model.predict(current_batch, verbose=0)
 
             input_network = current_batch
-            output_network = np.zeros(shape=(self.batch_size, 2))
+            output_network = np.zeros(shape=(self.batch_size, self.action_dimension))
             self.actions = np.zeros(shape=(self.batch_size, 1))
 
             for index, (_, action, reward, _, terminated) in enumerate(
@@ -126,8 +116,8 @@ class DeepQLearning:
                 input_network,
                 output_network,
                 batch_size=self.batch_size,
-                epochs=8,  # Epochs on each batch
-                verbose=0,  # type: ignore
+                epochs=8,
+                verbose=0,
             )
             self.step += 1
 

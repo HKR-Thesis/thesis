@@ -22,7 +22,7 @@ def find_project_root(current_path: Path):
     return current_path
 
 
-def reward_plot(total_rewards: list[float]):
+def reward_plot(total_rewards):
     plt.plot(total_rewards)
     plt.xlabel("Episode")
     plt.ylabel("Total Reward")

@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 from datetime import datetime
 from scipy.signal import savgol_filter
+from pathlib import Path
+from src.util import find_project_root
 
 fieldnames = [
     "Time",
@@ -64,7 +66,12 @@ def plot(csv_path):
         ax.xaxis.set_major_locator(mdates.AutoDateLocator())
         plt.setp(ax.xaxis.get_majorticklabels(), rotation=45, ha="right")
 
-    plt.savefig(f"../../out/plots/{datetime.now().strftime('%Y-%m-%d@%H:%M:%S')}")
+    current_file_path = Path(__file__).resolve().parent
+    project_root = find_project_root(current_file_path)
+
+    plt.savefig(
+        f"{project_root}/out/plots/{datetime.now().strftime('%Y-%m-%d@%H:%M:%S')}"
+    )
 
 
 if __name__ == "__main__":
