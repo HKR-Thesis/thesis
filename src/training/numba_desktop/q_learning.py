@@ -1,10 +1,10 @@
 import numpy as np
 from numba import njit
-from typing import Tuple, List
 
 
 class QLearning:
-    def __init__(self, config: List[float]):
+    def __init__(self, config: list) -> None:
+
         self.alpha = config[0]
         self.gamma = config[1]
         self.epsilon = config[2]
@@ -38,7 +38,7 @@ class QLearning:
         low_bounds: np.ndarray,
         up_bounds: np.ndarray,
         bins: np.ndarray,
-    ) -> Tuple[int, int, int, int]:
+    ) -> tuple[np.float64, np.float64, np.float64, np.float64]:
         (
             angle_theta,
             angular_velocity_theta_dot,
@@ -46,10 +46,26 @@ class QLearning:
             cart_velocity,
         ) = simulator_state
 
-        theta_bins = np.linspace(low_bounds[0], up_bounds[0], bins[0])
-        theta_dot_bins = np.linspace(low_bounds[1], up_bounds[1], bins[1])
-        cart_position_bins = np.linspace(low_bounds[2], up_bounds[2], bins[2])
-        cart_velocity_bins = np.linspace(low_bounds[3], up_bounds[3], bins[3])
+        theta_bins = np.linspace(
+            low_bounds[0],
+            up_bounds[0],
+            bins[0],
+        )
+        theta_dot_bins = np.linspace(
+            low_bounds[1],
+            up_bounds[1],
+            bins[1],
+        )
+        cart_position_bins = np.linspace(
+            low_bounds[2],
+            up_bounds[2],
+            bins[2],
+        )
+        cart_velocity_bins = np.linspace(
+            low_bounds[3],
+            up_bounds[3],
+            bins[3],
+        )
 
         theta_index = np.digitize(angle_theta, theta_bins)
         theta_dot_index = np.digitize(
@@ -59,24 +75,24 @@ class QLearning:
         cart_velocity_index = np.digitize(cart_velocity, cart_velocity_bins)
 
         return (
-            theta_index - 1,
-            theta_dot_index - 1,
-            cart_position_index - 1,
-            cart_velocity_index - 1,
+            np.subtract(theta_index, 1),
+            np.subtract(theta_dot_index, 1),
+            np.subtract(cart_position_index, 1),
+            np.subtract(cart_velocity_index, 1),
         )
 
     def select_action(
-        self, state: Tuple[int, int, int, int], episode_index: int
-    ) -> int:
+        self, state: tuple[np.intp, np.intp, np.intp, np.intp], episode_index: int
+    ) -> np.intp:
         if episode_index > 7000:
             self.epsilon *= 0.999
         if episode_index < 5000:
-            return np.random.choice(self.actions)
+            return np.random.choice([0, 1])
 
         random_number = np.random.random()
 
         if random_number < self.epsilon:
-            return np.random.choice(self.actions)
+            return np.random.choice([0, 1])
         else:
             return np.argmax(self.q_table[state])
 
@@ -84,10 +100,10 @@ class QLearning:
     @njit(fastmath=True)
     def update_q_table(
         q_table,
-        state: Tuple[int, int, int, int],
-        action: int,
+        state: tuple[np.float64, np.float64, np.float64, np.float64],
+        action: np.intp,
         reward: float,
-        next_state: Tuple[int, int, int, int],
+        next_state: tuple[np.float64, np.float64, np.float64, np.float64],
         terminal_state: bool,
         gamma: float,
         alpha: float,
