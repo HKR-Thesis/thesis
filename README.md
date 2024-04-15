@@ -15,13 +15,31 @@ The project provides several setup scripts under scripts/ to install the necessa
 - venv.sh : Installs the necessary python dependencies for the project based on the underlying device
 
 
-## OKDO Nano C100 setup
+## OKDO Nano C100 Setup
 
 - The official [OKDO Nano C100 System Image](https://auto.designspark.info/okdo_images/c100.img.xz) is based on Ubuntu 18.04 LTS (Bionic Beaver)
 - The default Jetpack version is 4.6.1, but might have to be installed manually with ```sudo apt install -y nvidia-jetpack```
 - The default python version is 3.6
 
-### Installation of tensorflow with cuda support on OKDO Nano C100
+### Docker Version
+
+The project can be run on the OKDO Nano C100 using Docker. The Dockerfile is located under the ``l4t-tensorflow-container``` directory of the project. The following commands can be used to build the docker image:
+
+```bash
+sudo apt install docker-compose
+
+python -m pip install setuptools_rust
+
+python -m pip install docker-compose==1.17.1
+
+cd l4t-tensorflow-container
+
+docker-compose run l4t-tensorflow-cuda
+```
+
+The docker image will be built and the container will be started. The project can be run from the container, with the necessary dependencies already installed.
+
+### Bare Metal Installation of Tensorflow with CUDA support on OKDO Nano C100
 
 > [!IMPORTANT] 
 > A common issue that occurs when instsalling tensorflow is ```fatal error: xlocale.h: No such file or directory```. This can be fixed by creating the symlink ```sudo ln -s /usr/include/locale.h /usr/include/xlocale.h```
@@ -44,9 +62,9 @@ Now install the tensorflow package with the following command:
 sudo python -m pip3 install --verbose tensorflow-2.7.0+nv22.1-cp36-cp36m-linux_aarch64.whl
 ```
 
-## Desktop/Server setup
+## NVIDIA Desktop Setup
 
-The project can be run on a desktop/server environment. The project has been tested on Ubuntu 20.04 LTS. The following distro dependencies are required:
+The project can be run on a desktop/server environment with an NVIDIA compatible GPU. The project has been tested on Ubuntu 20.04 LTS using an NVIDIA 4070TI. The following distro dependencies are required:
 
 - Ubuntu 20.04 LTS
 - Python >=3.8
