@@ -1,10 +1,13 @@
 # About
 
-This project is a simple example of training a pendulum to balance using Q learning. The pendulum is a simple inverted pendulum system with a single joint and a mass at the end. The pendulum is trained using a Q learning algorithm to balance the pendulum in the upright position.
+Our project investigates the potential of Q-Learning, a reinforcement learning technique, for controlling an inverted pendulum (cart-pole) system in resource-constrained
+embedded environments, compared to traditional machine learning computing setups. Highlighting the importance of efficient resource management, we aim to explore how Q-Learning can manage complex tasks with minimal resources while maintaining accuracy, using the cart-pole—a benchmark experiment for non-linear control—as our testbed. Our study is motivated by the transformative impact of reinforcement learning on autonomous systems, especially in navigation and adaptation within dynamic environments.
+
+We evaluate the performance and resource consumption of Q-Learning on an efficient embedded platform, such as the NVIDIA Jetson Nano, against more resource-abundant computing environments. Our research focuses on assessing the trade-offs in performance metrics like response time, accuracy, and energy usage, aiming to establish whether Q-Learning can achieve comparable effectiveness in embedded systems as it does in larger computing environments. By demonstrating the practicality of Q-Learning for real-time or on-device training in embedded systems, our work seeks to advance autonomous system development for scenarios where computing resources are limited. This could lead to more energy-efficient, cost-effective autonomous solutions across various applications, addressing the challenges of speed, efficiency, and power consumption critical to edgecomputing devices
 
 # Installation
 
-The project provides several setup scripts under scripts/ to install the necessary dependencies. An assumption before initializing or running for the Jetson Nano is that tensorflow has already been setup on the device (instructions can be found below). The scripts are as follows:
+The project provides several setup scripts under scripts/ to install the necessary dependencies. An assumption before initializing or running for the Jetson Nano is that tensorflow has already been setup on the device (instructions can be found [below](#installation-of-tensorflow-with-cuda-support-on-okdo-nano-c100)). The scripts are as follows:
 
 - init.sh: Creates a general setup of the project
 - conda.sh: Installs the conda environment if the underlying device is not a Jetson Nano
