@@ -1,9 +1,10 @@
 import numpy as np
 from numba import njit
+from typing import Tuple, List
 
 
 class QLearning:
-    def __init__(self, config: list) -> None:
+    def __init__(self, config: List) -> None:
 
         self.alpha = config[0]
         self.gamma = config[1]
@@ -63,7 +64,7 @@ class QLearning:
         return (theta_index, theta_dot_index, cart_position_index, cart_velocity_index)
 
     def select_action(
-        self, state: tuple[np.intp, np.intp, np.intp, np.intp], episode_index: int
+        self, state: Tuple[np.intp, np.intp, np.intp, np.intp], episode_index: int
     ) -> np.intp:
         if episode_index > 7000:
             self.epsilon *= 0.999
@@ -81,10 +82,10 @@ class QLearning:
     @njit(fastmath=True)
     def update_q_table(
         q_table,
-        state: tuple[np.float64, np.float64, np.float64, np.float64],
+        state: Tuple[np.float64, np.float64, np.float64, np.float64],
         action: np.intp,
         reward: float,
-        next_state: tuple[np.float64, np.float64, np.float64, np.float64],
+        next_state: Tuple[np.float64, np.float64, np.float64, np.float64],
         terminal_state: bool,
         gamma: float,
         alpha: float,
