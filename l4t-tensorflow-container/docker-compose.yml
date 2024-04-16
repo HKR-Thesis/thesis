@@ -5,6 +5,7 @@ services:
       context: ../
       dockerfile: l4t-tensorflow-container/Dockerfile
     ports:
+      - "2222:22"
       - "80:80"
     volumes:
       - ..:/app
