@@ -1,2 +1,2 @@
-l4t-tensorflow-container/
-.git/
+**/l4t-tensorflow-container/
+**/.git/
