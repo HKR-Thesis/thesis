@@ -13,7 +13,7 @@ from src.training.deep_q_learning_.train_episodes import (
     simulate_episodes as dql_sim,
 )
 
-types = ["classic", "numba", "dql-target", "dql"]
+types = ["classic", "numba", "dql_target", "dql"]
 
 
 def parse_arguments():
@@ -47,7 +47,7 @@ def train(training_type, with_rewards):
             _, rewards = classic_sim(15000)
         elif training_type == "numba":
             _, rewards = numba_sim(15000)
-        elif training_type == "dql-target":
+        elif training_type == "dql_target":
             rewards = dql_target_sim(100)
         elif training_type == "dql":
             rewards = dql_sim(1000)

@@ -113,7 +113,7 @@ def measure(target_pid, training_type):
     current_file_path = Path(__file__).resolve().parent
     project_root = find_project_root(current_file_path)
 
-    filename = f"{project_root}/out/metrics/server-metrics-{training_type}_{datetime.now().strftime('%Y-%m-%d@%H-%M-%S')}.csv"
+    filename = f"{project_root}/out/metrics/server-metrics-{training_type}-{datetime.now().strftime('%Y%m%d@%H%M%S')}.csv"
     process = psutil.Process(target_pid)
 
     pynvml.nvmlInit()
