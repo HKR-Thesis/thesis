@@ -56,11 +56,11 @@ class DeepQLearning:
         if episode_index > 400:
             self.epsilon *= 0.999
         if episode_index < 200:
-            return np.random.choice([-1, 1])
+            return np.random.choice([0, 1])
 
         random_number = np.random.random()
         if random_number < self.epsilon:
-            return np.random.choice([-1, 1])
+            return np.random.choice([0, 1])
         else:
             q_values = self.online_model.predict(np.array([state]), verbose=0)
             return np.argmax(q_values[0])

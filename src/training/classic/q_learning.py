@@ -85,11 +85,11 @@ class QLearning:
         if episode_index > 7000:
             self.epsilon *= 0.999
         if episode_index < 5000:
-            return np.random.choice([-1, 1])
+            return np.random.choice([0, 1])
 
         random_number = np.random.random()
         if random_number < self.epsilon:
-            return np.random.choice([-1, 1])
+            return np.random.choice([0, 1])
         else:
             return np.argmax(self.q_table[state])
 
