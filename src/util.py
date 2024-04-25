@@ -23,7 +23,7 @@ def find_project_root(current_path: Path):
 
 
 def reward_plot(total_rewards):
-    plt.plot(total_rewards)
+    #plt.plot(total_rewards)
     plt.xlabel("Episode")
     plt.ylabel("Total Reward")
     plt.savefig("figures/" + datetime.today().strftime("%Y-%m-%d-%hr-%m-%s") + ".png")

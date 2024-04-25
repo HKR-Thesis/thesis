@@ -14,6 +14,8 @@ def measure(training_type):
         "src.training.main",
         "--train",
         training_type,
+        "--with-rewards",
+        "yes",
     ]
     train_proc = run_process(training_command, "Training")
 
