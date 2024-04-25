@@ -35,13 +35,13 @@ def get_metrics(jetson) -> dict:
         "GPU Temp": jetson.temperature["GPU"]["temp"],
         "CPU Power Consumption": (
             jetson.power["rail"]["POM_5V_CPU"]["volt"]
-            * jetson.power["rail"]["POM_5V_CPU"]["curr"]
-            / 1000
+            * (jetson.power["rail"]["POM_5V_CPU"]["curr"]
+            / 1000)
         ),  # watts!
         "GPU Power Consumption": (
             jetson.power["rail"]["POM_5V_GPU"]["volt"]
-            * jetson.power["rail"]["POM_5V_GPU"]["curr"]
-            / 1000
+            * (jetson.power["rail"]["POM_5V_GPU"]["curr"]
+            / 1000)
         ),  # watts!
     }
 

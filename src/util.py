@@ -28,7 +28,7 @@ def reward_plot(total_rewards):
     #plt.plot(total_rewards)
     plt.xlabel("Episode")
     plt.ylabel("Total Reward")
-    plt.savefig(f"{project_root}/figures/" + datetime.today().strftime("%Y-%m-%d-%hr-%m-%s") + ".png")
+    plt.savefig(f"{project_root}/out/figures/" + datetime.today().strftime("%Y-%m-%d-%hr-%m-%s") + ".png")
 
 
 def print_pipe(stream, prefix=""):
