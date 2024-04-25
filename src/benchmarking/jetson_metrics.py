@@ -36,11 +36,13 @@ def get_metrics(jetson) -> dict:
         "CPU Power Consumption": (
             jetson.power["rail"]["POM_5V_CPU"]["volt"]
             * jetson.power["rail"]["POM_5V_CPU"]["curr"]
+            / 1000
         ),  # watts!
         "GPU Power Consumption": (
             jetson.power["rail"]["POM_5V_GPU"]["volt"]
             * jetson.power["rail"]["POM_5V_GPU"]["curr"]
-        ),  # GPU power in mW or W (not entirely sure yet)
+            / 1000
+        ),  # watts!
     }
 
 
