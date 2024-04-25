@@ -23,10 +23,12 @@ def find_project_root(current_path: Path):
 
 
 def reward_plot(total_rewards):
+    current_file_path = Path(__file__).resolve().parent
+    project_root = find_project_root(current_file_path)
     #plt.plot(total_rewards)
     plt.xlabel("Episode")
     plt.ylabel("Total Reward")
-    plt.savefig("figures/" + datetime.today().strftime("%Y-%m-%d-%hr-%m-%s") + ".png")
+    plt.savefig(f"{project_root}/figures/" + datetime.today().strftime("%Y-%m-%d-%hr-%m-%s") + ".png")
 
 
 def print_pipe(stream, prefix=""):
