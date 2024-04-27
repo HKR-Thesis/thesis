@@ -53,7 +53,7 @@ def train(training_type, with_rewards):
             rewards = dql_sim(1000)
 
         if with_rewards == "yes" and rewards:
-            reward_plot(rewards)
+            reward_plot(training_type, rewards)
 
     except Exception as e:
         print(

@@ -28,21 +28,13 @@ def get_metrics(jetson) -> dict:
     """
     return {
         "Time": datetime.now().strftime("%H:%M:%S"),
-        "CPU Util": jetson.cpu["total"]["user"],
-        "GPU Util": jetson.gpu["gpu"]["status"]["load"],
-        "MEM Util": jetson.memory["RAM"]["used"] / jetson.memory["RAM"]["tot"],
+        "CPU Util": round(jetson.cpu["total"]["user"], 2),
+        "GPU Util": round(jetson.gpu["gpu"]["status"]["load"], 2),
+        "MEM Util": round(jetson.memory["RAM"]["used"] / jetson.memory["RAM"]["tot"], 2),
         "CPU Temp": jetson.temperature["CPU"]["temp"],
         "GPU Temp": jetson.temperature["GPU"]["temp"],
-        "CPU Power Consumption": (
-            jetson.power["rail"]["POM_5V_CPU"]["volt"]
-            * (jetson.power["rail"]["POM_5V_CPU"]["curr"]
-            / 1000)
-        ),  # watts!
-        "GPU Power Consumption": (
-            jetson.power["rail"]["POM_5V_GPU"]["volt"]
-            * (jetson.power["rail"]["POM_5V_GPU"]["curr"]
-            / 1000)
-        ),  # watts!
+        "CPU Power Consumption": round(jetson.power["rail"]["POM_5V_CPU"]["power"] / 1000, 2),  # watts rounded to two decimal places
+        "GPU Power Consumption": round(jetson.power["rail"]["POM_5V_GPU"]["power"] / 1000, 2),  # watts rounded to two decimal places
     }
 
 
