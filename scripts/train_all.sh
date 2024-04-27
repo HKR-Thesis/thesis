@@ -11,6 +11,7 @@ do
 done
 
 # uses tensorflow with no GPU support
+
 for train_type in "${on_cpu[@]}"
 do
    python3.10 -m src.benchmark --train $train_type
