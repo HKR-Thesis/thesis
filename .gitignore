@@ -13,4 +13,3 @@ Miniconda3*.sh
 Miniforge3*.sh
 *logs.txt
 *.pyc
-analysis/
