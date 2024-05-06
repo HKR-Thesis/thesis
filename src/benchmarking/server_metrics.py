@@ -1,3 +1,4 @@
+from contextlib import contextmanager
 import sys
 import pynvml
 import argparse
@@ -116,17 +117,16 @@ def measure(target_pid, training_type):
     filename = f"{project_root}/out/metrics/server-metrics-{training_type}-{datetime.now().strftime('%Y%m%d@%H%M%S')}.csv"
     process = psutil.Process(target_pid)
 
-    pynvml.nvmlInit()
-    nvml_handle = pynvml.nvmlDeviceGetHandleByIndex(0)
+    with nvml_context() as nvml_handle:
+        with open(filename, mode="w", newline="") as file:
+            writer = csv.DictWriter(file, fieldnames=fieldnames)
+            writer.writeheader()
 
-    with open(filename, mode="w", newline="") as file:
-        writer = csv.DictWriter(file, fieldnames=fieldnames)
-        writer.writeheader()
-
-        while process.is_running():
-            metrics = get_metrics(process, nvml_handle)
-            writer.writerow(metrics)
-            time.sleep(2.5)
+            while process.is_running():
+                metrics = get_metrics(process, nvml_handle)
+                writer.writerow(metrics)
+                file.flush()
+                time.sleep(2.5)
 
     print(f"Finished collecting metrics - (calling process <{target_pid}> killed)")
 
@@ -142,6 +142,16 @@ def parse_arguments():
         "--train", type=str, required=True, help="Specify the type of training"
     )
     return parser.parse_args()
+
+
+@contextmanager
+def nvml_context(device_index=0):
+    try:
+        pynvml.nvmlInit()
+        handle = pynvml.nvmlDeviceGetHandleByIndex(device_index)
+        yield handle
+    finally:
+        pynvml.nvmlShutdown()
 
 
 if __name__ == "__main__":
