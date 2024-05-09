@@ -14,12 +14,15 @@ def measure(training_type):
         "src.training.main",
         "--train",
         training_type,
+        "--with-rewards",
+        "yes",
     ]
     train_proc = run_process(training_command, "Training")
 
     if benchmark_path is not None:
         benchmark_command = [
             sys.executable,
+            "-u",
             "-m",
             "src.benchmarking.jetson_metrics",
             "--pid",

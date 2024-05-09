@@ -1,6 +1,5 @@
 from numba import njit
 
-
 @njit
 def custom_digitize(value, bins):
     for i in range(len(bins)):
